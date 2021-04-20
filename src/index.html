@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSDK Demo</title>
+    <link rel="stylesheet" href="style/normalize.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style/style.css" />
+  </head>
+  <body>
+    <!--  Login page -->
+    <div class="page page_login hidden">
+      <div class="login">
+        <div class="login_header">
+          <img src="assets/logo.svg" alt="Demo Conference" />
+          <h3>Demo Conference Sign up</h3>
+        </div>
+        <div class="auth-error"></div>
+        <div class="form">
+          <div class="form_group">
+            <label for="input-server-ip" class="input_label">Server IP</label>
+            <input type="text" id="input-server-ip" class="input" />
+          </div>
+          <div class="form_group">
+            <label for="input-username" class="input_label">Username</label>
+            <input
+              type="text"
+              placeholder='username@appname.accname.voximplant.com'
+              id="input-username"
+              class="input"
+              required
+              pattern="\S+"
+            />
+          </div>
+          <div class="form_group">
+            <label for="input-password" class="input_label">Password</label>
+            <span class="visibility"></span>
+            <input
+              type="password"
+              id="input-password"
+              class="input"
+              required
+              pattern="\S+"
+            />
+          </div>
+          <div class="form_group">
+            <div class="checkbox checkbox__large">
+              <input tabindex="0" type="checkbox" id="input-debug" />
+              <label for="input-debug">Show full debug info</label>
+            </div>
+          </div>
+          <div class="form_group">
+            <div class="checkbox checkbox__large">
+              <input tabindex="0" type="checkbox" id="input-connectivity" />
+              <label for="input-connectivity">Connectivity check</label>
+            </div>
+          </div>
+          <div class="form_group">
+            <button class="btn btn__block btn__primary" id="login-btn" disabled>
+              Login
+            </button>
+          </div>
+        </div>
+        <div class="server-list hidden"></div>
+      </div>
+    </div>
+    <!-- End of login page -->
+
+    <!-- Action page -->
+    <div class="page page_action hidden">
+      <!-- Incoming call window -->
+      <div class="incoming-call hidden" id="incoming-call">
+        <div class="incoming-call-window">
+        <h2>Incomming Call...</h2>
+          <div class="close-incoming-window"></div>
+        <div class="caller" id="caller-number"> Caller</div>
+        <div class="checkbox_group">
+          <div class="checkbox">
+            <input type="checkbox" id="input-send_video_incoming_call" />
+            <label for="input-send_video_incoming_call">SendVideo</label>
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" id="input-h264_incoming_call" />
+            <label for="input-h264_incoming_call">H264</label>
+          </div>
+        </div>
+        <div class="btn_group">
+          <button class="btn btn__primary" id="incoming-call-answer">Answer</button>
+          <button class="btn btn__decline" id="incoming-call-decline">Decline</button>
+        </div>
+        </div>
+      </div>
+      <!-- End of incoming call window -->
+      <!-- Info about the looged user -->
+      <div class="action_auth-data">
+        <h2></h2>
+        <h3></h3>
+      </div>
+      <!-- End of the info about the logged user -->
+      <!-- Remote video -->
+      <div class="action_remote-video">
+        <h3>Incoming video</h3>
+        <div class="remote-video-holder empty" id="remote_video_holder">
+        </div>
+        <div class="timer">00:00:00
+        </div>
+      </div>
+      <!-- End of remote video -->
+      <!-- Local video -->
+      <div class="action_local-video">
+        <h3>Local Video</h3>
+        <div class="local-video-holder" id="local_video_holder">
+        <div class="white-circle"></div>
+        </div>
+        <!-- Media settings -->
+        <div class="action_media-selector">
+          <div class="media-selector_block-camera">
+            <label for="change-camera">Camera</label>
+            <select name="camera" id="change-camera">
+            </select>
+            <div class="custom-select camera">
+              <div class="select-selected selected-camera">
+              </div>
+              <div class="camera-items select-items hidden">
+              </div>
+            </div>
+          </div>
+          <div class="media-selector_block-microphone">
+            <label for="change-microphone">Microphone</label>
+            <select name="microphone" id="change-microphone">
+            </select>
+            <div class="custom-select microphone">
+              <div class="select-selected selected-microphone">
+              </div>
+              <div class="microphone-items select-items hidden">
+              </div>
+            </div>
+          </div>
+          <div class="media-selector_block-speaker">
+            <label for="change-speaker">Speaker</label>
+            <select name="speaker" id="change-speaker">
+            </select>
+            <div class="custom-select speaker">
+              <div class="select-selected selected-speaker">
+              </div>
+              <div class="speaker-items select-items hidden">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End of media settings -->
+      </div>
+      <!-- End of local video -->
+      <div class="action_bordered_holder">
+      <!-- Connection section -->
+        <div class="action_connecting action_bordered">
+          <h2>Connecting</h2>
+          <!-- Call type selection -->
+          <div class="radio-group">
+            <label class="radio-container"
+              >One-To-One Call
+              <input tabindex="0" type="radio" name="radio" class="input-radio" id="one-to-one-call-btn" checked/>
+              <span class="radio"></span>
+            </label>
+            <label class="radio-container"
+              >Conference Call
+              <input tabindex="0" type="radio" name="radio" class="input-radio" id="conf-call-btn"/>
+              <span class="radio"></span>
+            </label>
+          </div>
+          <!-- End of call type selection -->
+          <!-- Number input -->
+          <div class="input_group">
+            <label for="input-number" class="input_label"
+              >Number</label
+            >
+            <input type="text" id="input-number" class="input" />
+          </div>
+          <!-- End of number input -->
+          <!-- Call settings checkbox group -->
+          <div class="checkbox_group">
+            <div class="checkbox">
+              <input type="checkbox" id="input-send_video_call" />
+              <label for="input-send_video_call">SendVideo</label>
+            </div>
+            <div class="checkbox">
+              <input type="checkbox" id="input-h264_call" />
+              <label for="input-h264_call">H264</label>
+            </div>
+            <div class="checkbox hidden" id="input-simulcast-container">
+              <input type="checkbox" id="input-simulcast" />
+              <label for="input-simulcast">Simulcast</label>
+            </div>
+          </div>
+          <!-- End of call settings checkbox group -->
+          <!-- Call manage button group -->
+          <div class="btn_group" id="call-btn-group">
+            <button class="btn btn__primary" id="call-btn">Call</button>
+            <button class="btn hidden" id="viewer-button">Join as viewer</button>
+          </div>
+          <div class="btn_group hidden" id="decline-btn-group">
+            <button class="btn btn__decline" id="end-call">Decline</button>
+            <button class="btn" id="hold-btn">Hold</button>
+          </div>
+          <div tabindex="0" class="btn__transfer hidden" id="transfer">Transfer</div>
+        </div>
+        <!-- End of call manage button group -->
+        <!-- End of connection section -->
+        <!-- Transfer call section -->
+        <div class="action_transfer action_bordered hidden">
+          <h2>Transfer</h2>
+          <div class="input_group">
+            <label for="input-number-transfer" class="input_label"
+            >Number</label
+            >
+            <input type="text" id="input-number-transfer" class="input" />
+          </div>
+          <div class="checkbox_group">
+            <div class="checkbox">
+              <input type="checkbox" id="input-send_video_call-transfer" />
+              <label for="input-send_video_call-transfer">SendVideo</label>
+            </div>
+            <div class="checkbox">
+              <input type="checkbox" id="input-h264_call-transfer" />
+              <label for="input-h264_call-transfer">H264</label>
+            </div>
+          </div>
+          <!-- Transfer call manage button group -->
+          <div class="btn_group" id="transfer-btn-group">
+            <button class="btn btn__primary" id="call-btn-transfer">Call</button>
+            <button class="btn" id="back-to-call-btn">Back</button>
+          </div>
+          <div class="btn_group hidden" id="transfer-confirm-btn-group">
+            <button class="btn btn__primary" id="confirm-transfer-btn">Confirm</button>
+            <button class="btn" id="cancel-transfer-btn">Cancel</button>
+          </div>
+          <!-- End of transfer call manage button group -->
+        </div>
+        <!-- End of transfer call section -->
+        <!-- Sharing section -->
+        <div class="action_sharing action_bordered">
+          <h2>Sharing</h2>
+          <div class="access_alarm">
+            The options are only accessible during call.
+          </div>
+          <div class="checkbox_group">
+            <div class="checkbox">
+              <input type="checkbox" id="input-show-local-video" disabled/>
+              <label for="input-show-local-video">ShowLocalVideo</label>
+            </div>
+            <div class="checkbox">
+              <input type="checkbox" id="input-replace-video" disabled/>
+              <label for="input-replace-video">ReplaceVideo</label>
+            </div>
+          </div>
+          <div class="btn_group">
+            <button class="btn btn__primary" id="start-sharing" disabled>Share</button>
+            <button class="btn" id="stop-sharing" disabled>Stop sharing</button>
+          </div>
+        </div>
+        <!-- End of sharing settings -->
+        <!-- Options section -->
+        <div class="action_options action_bordered">
+          <h2>Optional</h2>
+          <div class="access_alarm">
+            The options are only accessible during call.
+          </div>
+          <div class="switch-group">
+            <div class="switch-block">Show local video
+              <label class="switch">
+                <input type="checkbox" id="show-local-video-switch" />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="switch-block disabled" id="switch-mute">Mute
+              <label class="switch">
+                <input type="checkbox" id="mute" disabled/>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="switch-block disabled" id="switch-start-video">Start sending video
+              <label class="switch">
+                <input type="checkbox" id="start-sending-video" disabled />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End of options section -->
+      <!-- Logger section -->
+      <div class="action_logger">
+        <h2>Data</h2>
+        <h3>Logger</h3>
+        <div class="textarea-container">
+          <textarea id="logarea"></textarea>
+        </div>
+      </div>
+      <!-- Endpoints table section -->
+      <div class="action_endpoints">
+        <table class="table">
+          <tr>
+            <th>ID endpoint</th>
+            <th>Id Video</th>
+            <th>ID Audio</th>
+          </tr>
+          <tbody id="endpoints-table">
+          </tbody>
+        </table>
+      </div>
+      <!-- End of endpoints table section -->
+    </div>
+    <!-- End of action page -->
+    <script src="https://unpkg.com/voximplant-websdk"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/dropdown-list.js"></script>
+    <script src="js/actions.js"></script>
+    <script src="js/endpoints.js"></script>
+    <script src="js/manage-mediastreams.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/manage-call.js"></script>
+    <script src="js/hardware-settings.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>

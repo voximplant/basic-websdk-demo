@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+.idea
+*.sublime*
+.vscode
+*.log*
+.prettierrc
+node_modules/
+build/
+bundle.js*
+dist/
+package-lock.json
+voximplant.js
+voximplant.js.map
+test.js
