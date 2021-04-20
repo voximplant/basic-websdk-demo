@@ -1,0 +1,45 @@
+image: node:10
+
+stages:
+  - build
+  - publish
+
+before_script:
+  - npm -v
+  - node -v
+
+build_app:
+  tags:
+    - docker
+  script:
+    - npm install
+    - cd ./src
+    - tar -czf ../build.tar.gz *
+  stage: build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - build.tar.gz
+
+.tpl_publish: &tpl_publish
+  tags:
+    - docker
+  script:
+    - echo "$SSH_KEY" > ./stage_key
+    - mkdir ~/.ssh
+    - ssh-keyscan $HOST >> ~/.ssh/known_hosts
+    - chmod 700 ./stage_key
+    - ssh -i ./stage_key -o "StrictHostKeyChecking=no" $USER@$HOST
+    - scp -i ./stage_key build.tar.gz $USER@$HOST:~
+    - ssh -i ./stage_key $USER@$HOST "tar -zxf build.tar.gz -C $FILE_PATH"
+    - ssh -i ./stage_key $USER@$HOST "rm build.tar.gz"
+
+publish_prod:
+  <<: *tpl_publish
+  stage: publish
+  when: manual
+  variables:
+    SSH_KEY: $PROD_KEY
+    HOST: $PROD_RU
+    USER: $PROD_CI
+    FILE_PATH: $PROD_PATH
