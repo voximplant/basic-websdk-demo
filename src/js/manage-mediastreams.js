@@ -9,7 +9,7 @@ const stopShare = (call) => {
         changeAccessToSharingElements();
         logger.write('Sharing detached');
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {});
   }
 };
 

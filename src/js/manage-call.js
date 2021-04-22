@@ -68,37 +68,39 @@ const createTransferCall = () => {
   });
 
   transferCall.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
-    console.log(`Transfer call disconnected`);
     transferCallStateDisconnected();
   });
 
   transferCall.addEventListener(VoxImplant.CallEvents.Failed, (e) => {
-    console.log(`Transfer call failed`);
     transferCallStateDisconnected();
   });
 };
 
-const setUpCall = ({ currentCall, isConf, isIncoming, destination }) => {
-  let prefix = isConf ? 'Call conference to' : 'Call to';
+const setUpCall = ({ currentCall, isIncoming, destination, viewer }) => {
+  let prefix = isConference ? 'Call conference to' : 'Call to';
   if (isIncoming) prefix = 'Incoming call from';
   logger.write(`${prefix} ${destination}...`);
 
   currentCall.addEventListener(VoxImplant.CallEvents.EndpointAdded, onEndpointAdded);
 
   currentCall.addEventListener(VoxImplant.CallEvents.Updated, (e) => {
-    console.log('CALL UPDATED', e);
     logger.write(`CALL UPDATED: ${simpleStringify(e)}`);
   });
 
   currentCall.addEventListener(VoxImplant.CallEvents.Connected, (e) => {
-    if (e.call.settings.incoming) {
+    if (isIncoming || viewer) {
       disableConnectingSettings();
     }
-    callStateConnected();
+    if (viewer) {
+      disableDropdownSelect();
+    }
+    if (!viewer) {
+      callStateConnected();
+    }
   });
 
   currentCall.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
-    logger.write(`${prefix} was disconnected`);
+    logger.write(`${prefix} ${destination} was disconnected`);
     document.getElementById('decline-btn-group').classList.add('hidden');
     document.getElementById('call-btn-group').classList.remove('hidden');
     callStateDisconnected();
@@ -112,7 +114,6 @@ const setUpCall = ({ currentCall, isConf, isIncoming, destination }) => {
   });
 
   currentCall.addEventListener(VoxImplant.CallEvents.MediaElementCreated, (e) => {
-    console.log('CALL MediaElementCreated', e);
     logger.write(`CALL MediaElementCreated: ${simpleStringify(e)}`);
   });
 };

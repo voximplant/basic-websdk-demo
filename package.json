@@ -7,8 +7,7 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "yarn commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged"
+      "commit-msg": "yarn commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {

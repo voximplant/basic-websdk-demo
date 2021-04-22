@@ -1,6 +1,8 @@
 let lastDataFromLocalStorage;
+const lastData = {};
 const serverIpInput = document.getElementById('input-server-ip');
 const debugInfoInput = document.getElementById('input-debug');
+const connectivityCheckInput = document.getElementById('input-connectivity');
 const logger = new cLogger(document.getElementById('logarea'));
 const userNameInput = document.getElementById('input-username');
 const passwordInput = document.getElementById('input-password');
@@ -19,10 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('login-btn').disabled = false;
     try {
       lastDataFromLocalStorage = JSON.parse(lastDataRaw);
-      userNameInput.value = lastDataFromLocalStorage.username;
-      passwordInput.value = lastDataFromLocalStorage.password;
+      userNameInput.value = lastDataFromLocalStorage.username || '';
+      passwordInput.value = lastDataFromLocalStorage.password || '';
       serverIpInput.value = lastDataFromLocalStorage.serverIp || '';
-      if (lastDataFromLocalStorage.isDebugInfo) debugInfoInput.checked = 'checked';
+      debugInfoInput.checked = lastDataFromLocalStorage.isDebugInfo || false;
+      connectivityCheckInput.checked = lastDataFromLocalStorage.connectivityCheck || false;
 
       const table = document.querySelector('.server-list');
       if (lastDataFromLocalStorage.serverIps && lastDataFromLocalStorage.serverIps.length) {
@@ -45,28 +48,31 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const login = async () => {
-  let serverIps =
+  const serverIps =
     lastDataFromLocalStorage && lastDataFromLocalStorage.serverIps.length
       ? lastDataFromLocalStorage.serverIps
       : [];
-  const lastData = {
-    username: userNameInput.value,
-    password: passwordInput.value,
-    serverIp: serverIpInput.value,
-    serverIps: Array.from(new Set([...serverIps, serverIpInput.value].filter((i) => i.length > 1))),
-    isDebugInfo: debugInfoInput.checked,
-  };
-  localStorage.setItem('lastData', JSON.stringify(lastData));
+  lastData.serverIps = Array.from(new Set([...serverIps, serverIpInput.value].filter((i) => i.length > 1)));
+  lastData.username = userNameInput.value;
+  lastData.password = passwordInput.value;
+  lastData.serverIp = serverIpInput.value;
+  lastData.isDebugInfo = debugInfoInput.checked;
+  lastData.connectivityCheck = connectivityCheckInput.checked;
 
   if (sdk.alreadyInitialized && sdk.getClientState() === VoxImplant.ClientState.CONNECTED) {
     await signIn(userNameInput.value, passwordInput.value);
   } else if (sdk.alreadyInitialized) {
     await signIn(userNameInput.value, passwordInput.value);
-    // await connectToVoxCloud();
   } else {
     await init();
   }
+
+  if (sdk.getClientState() === VoxImplant.ClientState.DISCONNECTED) {
+    lastData.serverIps.pop();
+  }
+    localStorage.setItem('lastData', JSON.stringify(lastData));
 };
+
 
 const init = async () => {
   try {
@@ -115,7 +121,6 @@ const signIn = async (user, pass) => {
         '.action_auth-data'
       ).innerHTML = `<h2>Logged in as ${user} at ${serverIpInput.value}</h2>`;
   } catch (e) {
-    console.log(e);
     userNameInput.classList.add('invalid');
     passwordInput.classList.add('invalid');
   }
