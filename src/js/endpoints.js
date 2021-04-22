@@ -1,6 +1,7 @@
+const endpointsMedia = {};
 const onEndpointAdded = ({ endpoint }) => {
   console.warn('Endpoint added: ', endpoint);
-
+  endpointsMedia[endpoint.id] = [];
   const endpointTableRow = `<tr class="endpoint-row ${endpoint.id}">
               <td rowspan="1" class="endpoint-cell ${endpoint.id}-id">${endpoint.id}</td>
               <td class="endpoint-cell ${endpoint.id}-video"></td>
@@ -14,19 +15,23 @@ const onEndpointAdded = ({ endpoint }) => {
   endpoint.addEventListener(VoxImplant.EndpointEvents.Removed, onEndpointRemoved);
 };
 const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
-  console.log('Endpoint: ', endpoint);
   console.warn('MediaRenderer added: ', mediaRenderer);
 
-  // render media in container
   const mediaRendererKind = mediaRenderer.kind.replace('sharing', 'video');
-  if (
-    mediaRendererKind === 'video' &&
-    document.getElementById('remote_video_holder').classList.contains('empty')
-  ) {
+  if (!endpoint.isDefault || !isConference) {
     document.getElementById('remote_video_holder').classList.remove('empty');
+
+    // render media in container
+    endpointsMedia[endpoint.id].push(mediaRendererKind);
+    if (mediaRendererKind === 'audio' && !endpointsMedia[endpoint.id].includes('video')) {
+      addNoVideoContainer(endpoint.id);
+    }
+    if(mediaRendererKind === 'video' && document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null) {
+      document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
+    }
+    const videoHolder = document.querySelector('.remote-video-holder');
+    mediaRenderer.render(videoHolder);
   }
-  const remoteVideoHolder = document.getElementById('remote_video_holder');
-  mediaRenderer.render(remoteVideoHolder);
 
   // add media id in table with endpoints
   let endpointCell = document.querySelector(
@@ -43,7 +48,7 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
       .querySelector(`.${CSS.escape(endpoint.id)}-id`)
       .setAttribute('rowspan', rowWithEndpointDataWidth);
     if (document.querySelector(`.${CSS.escape(`${endpoint.id}`)}`)) {
-      const endpointRow = document.querySelectorAll(`.${CSS.escape(`${endpoint.id}`)}`);
+      const endpointRow = document.querySelectorAll(`.${CSS.escape(endpoint.id)}`);
       endpointRow[endpointRow.length - 1].insertAdjacentHTML('afterend', endpointTableRow);
     } else {
       document.getElementById('endpoints-table').insertAdjacentHTML('beforeend', endpointTableRow);
@@ -56,17 +61,33 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
   endpointCell.classList.remove(`${endpoint.id}-${mediaRendererKind}`);
 };
 
-const onRemoteMediaRemoved = ({ mediaRenderer }) => {
+const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
   console.warn('MediaRenderer removed: ', mediaRenderer);
+  if (!endpoint.isDefault || !isConference) {
+    const indexMedia = endpointsMedia[endpoint.id].indexOf(mediaRenderer.kind);
+    endpointsMedia[endpoint.id].splice(indexMedia, 1);
+    if (endpointsMedia[endpoint.id].length && endpointsMedia[endpoint.id].every(media => media === 'audio')) {
+      addNoVideoContainer(endpoint.id);
+    }
+    if (!endpointsMedia[endpoint.id].length) {
+      document.getElementById('remote_video_holder').classList.add('empty');
+    }
+  };
   const removedMedia = document.querySelector(`.${CSS.escape(mediaRenderer.id)}`);
   removedMedia && removedMedia.classList.add('inactive');
 };
 
 const onEndpointRemoved = ({ endpoint }) => {
-  console.log('Endpoint removed', endpoint);
+  document.getElementById('remote_video_holder').classList.add('empty');
+  document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null && document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
   document.querySelector(`.${CSS.escape(endpoint.id)}-id`).classList.add('inactive');
-  console.log(document.querySelector('.remote-video-holder').querySelector('video'));
-  if (!document.getElementById('remote_video_holder').querySelector('video')) {
-    document.getElementById('remote_video_holder').classList.add('empty');
-  }
+};
+
+const addNoVideoContainer = (endpointId) => {
+  const participantContainer = document.createElement('div');
+  participantContainer.classList.add('participant-container', `participant-${endpointId}`);
+  const noVideoSign = document.createElement('div');
+  noVideoSign.classList.add('white-circle');
+  participantContainer.appendChild(noVideoSign);
+  document.querySelector('.remote-video-holder').appendChild(participantContainer);
 };

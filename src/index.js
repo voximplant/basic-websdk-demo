@@ -1,4 +1,5 @@
 let currentCall;
+let isConference;
 let transferCall;
 let currentUser;
 let currentPass;
@@ -8,7 +9,7 @@ const sdk = VoxImplant.getInstance();
 // login
 document.getElementById('login-btn').onclick = async () => {
   await login();
-  setHardwareSettings();
+  await setHardwareSettings();
   accessFunctionality();
   manageConnectingView();
   getServerSDP(sdk);

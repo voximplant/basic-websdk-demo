@@ -110,6 +110,7 @@
 .checkbox {
     display: inline-block;
     margin-right: 17px;
+    margin-bottom: 14px;
 }
 
 .checkbox > input:disabled + label {
@@ -194,7 +195,7 @@
     justify-content: space-between;
 }
 .input-radio {
-    opacity: 0;
+    display: none;
     cursor: pointer;
 }
 .radio-container {
@@ -422,7 +423,7 @@ input:disabled {
         "endpoints"
         "reinvite";
 }
-@media (min-width: 700px){
+@media (min-width: 760px){
     .page_action{
         padding: 24px;
         grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -485,12 +486,19 @@ input:disabled {
     justify-content: center;
     background: #F2F2F5;
 }
+
 .remote-video-holder.empty {
     height: 225px;
     background-color: #F2F2F5;
 }
 
-.local-video-holder {
+.participant-container {
+    width: 400px;
+    height: 225px;
+    background-color: black;
+}
+
+.local-video-holder, .participant-container {
     display: flex;
     height: 225px;
     width: 400px;
@@ -498,6 +506,7 @@ input:disabled {
     justify-content: center;
     align-items: center;
 }
+
 .white-circle {
     background-color: white;
     border: solid 1px white;
@@ -509,6 +518,7 @@ input:disabled {
     background-position: center;
 }
 video {
+    display: inline-block;
     height: 225px;
 }
 @media (min-width: 700px){
@@ -529,7 +539,7 @@ video {
     }
 }
 .action_local-video {
-    height: 460px;
+    height: 600px;
 }
 
 .action_media-selector{
@@ -538,12 +548,19 @@ video {
 }
 .media-selector_block-microphone {
     position: absolute;
-    z-index: 5;
+    z-index: 3;
 }
 
 .media-selector_block-camera {
     position: absolute;
     margin-top: 80px;
+    z-index: 2;
+}
+
+.media-selector_block-speaker {
+    position: absolute;
+    margin-top: 160px;
+    z-index: 1;
 }
 
 .media-selector_value{
@@ -569,6 +586,10 @@ video {
     padding: 10px 40px 10px 12px;
     box-sizing: border-box;
 }
+.select-selected.disabled {
+    border: 1px solid #C7C8D9;
+
+}
 .arrow {
     position: absolute;
     left: 370px;
@@ -586,6 +607,15 @@ video {
     width: 10px;
     height: 5px;
     background-image: url("../assets/up.svg");
+    background-repeat: no-repeat;
+}
+.arrow.disabled {
+    position: absolute;
+    left: 370px;
+    top: 16px;
+    width: 10px;
+    height: 5px;
+    background-image: url("../assets/disabled-down.svg");
     background-repeat: no-repeat;
 }
 .select-items div {
@@ -625,7 +655,7 @@ video {
     padding: 24px;
     height: 330px;
 }
-.input_group, .checkbox_group {
+.input_group {
     margin: 12px 0;
 }
 .input {
@@ -750,7 +780,7 @@ td, th {
 
 .incoming-call {
     position: fixed;
-    z-index: 1;
+    z-index: 5;
     left: 0;
     top: 0;
     width: 100%;
@@ -781,4 +811,8 @@ td, th {
     height: 12px;
     background-image: url("../assets/close.svg");
     background-repeat: no-repeat;
+}
+
+.checkbox_group {
+    margin-top: 12px;
 }

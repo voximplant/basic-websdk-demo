@@ -11,6 +11,7 @@ const callConference = () => {
     H264first: document.getElementById('input-h264_call').checked,
     simulcast: document.getElementById('input-simulcast').checked,
   });
+  isConference = true;
   disableConnectingSettings();
   setUpCall({ currentCall, isConf: true, destination });
 };
@@ -21,8 +22,9 @@ const joinAsViewer = () => {
   cleanData();
   if (sdk.joinAsViewer) {
     currentCall = sdk.joinAsViewer(destination);
-    setUpCall({ currentCall, isConf: true, destination });
+    setUpCall({ currentCall, isConf: true, destination, viewer: true });
   } else {
     logger.write("This SDK version doesn't allow to call as viewer");
   }
+
 };

@@ -1,28 +1,21 @@
 const getMicrophones = async () => {
-  const devises = await VoxImplant.Hardware.AudioDeviceManager.get().getInputDevices();
-  console.log('Mic', devises);
-  const micDevices = devises.filter(
-    (mic) => !~mic.id.indexOf('default') && !~mic.id.indexOf('communications')
-  );
-  if (micDevices.length < 2) return console.error("You don't have an another microphone");
-  return micDevices;
+  return await VoxImplant.Hardware.AudioDeviceManager.get().getInputDevices();
 };
 
 const getCameras = async () => {
-  const devises = await VoxImplant.Hardware.CameraManager.get().getInputDevices();
-  if (devises.length < 2) return console.error("You don't have an another camera");
-  return devises;
+  return  await VoxImplant.Hardware.CameraManager.get().getInputDevices();
+};
+
+const getSpeakers = async () => {
+  return await VoxImplant.Hardware.AudioDeviceManager.get().getOutputDevices();
 };
 
 const setHardwareSettings = async () => {
   const cams = (await getCameras()) || [];
-  console.log('Cams: ', cams);
   const selectCamera = document.getElementById('change-camera');
-  const defaultCam = document.createElement('option');
-  defaultCam.innerHTML = 'Default';
-  defaultCam.id = 'Default';
-  selectCamera.appendChild(defaultCam);
-  cams.length &&
+  if (!cams.map(cam => cam.id).includes('default')) {
+    cams.unshift({id: 'default', name: 'default'});
+  }
     cams.forEach((cam) => {
       const option = document.createElement('option');
       option.value = cam.id;
@@ -32,13 +25,10 @@ const setHardwareSettings = async () => {
 
   const cameraGroups = new Set(cams.map((cam) => cam.group));
   const mics = (await getMicrophones()) || [];
-  console.log('Mics: ', mics);
   const selectMicrophone = document.getElementById('change-microphone');
-  const defaultMic = document.createElement('option');
-  defaultMic.innerHTML = 'Default';
-  defaultMic.id = 'Default';
-  selectMicrophone.appendChild(defaultMic);
-  mics.length &&
+  if (!mics.map(mic => mic.id).includes('default')) {
+    mics.unshift({id: 'default', name: 'default'})
+  }
     mics
       .filter((mic) => !cameraGroups.has(mic.group))
       .forEach((mic) => {
@@ -47,14 +37,32 @@ const setHardwareSettings = async () => {
         option.innerText = mic.name;
         selectMicrophone.appendChild(option);
       });
+
+  const speakers = (await getSpeakers()) || [];
+  const selectSpeaker = document.getElementById('change-speaker');
+  if (!speakers.map(speaker => speaker.id).includes('default')) {
+    speakers.unshift({id: 'default', name: 'default'});
+  }
+  speakers.forEach((speaker) => {
+    const option = document.createElement('option');
+    option.value = speaker.id;
+    option.innerText = speaker.name;
+    selectSpeaker.appendChild(option);
+  });
   document.getElementById('change-microphone').onclick = (e) => {
+    if (e.target.value === 'default') return;
     changeMicrophone(e.target.value);
   };
 
   document.getElementById('change-camera').onclick = (e) => {
+    if (e.target.value === 'default') return;
     changeCamera(e.target.value);
   };
 
+  document.getElementById('change-speaker').onclick = (e) => {
+    if (e.target.value === 'default') return;
+    changeSpeaker(e.target.value);
+  }
   dropdown();
 };
 
@@ -71,3 +79,10 @@ const changeCamera = (cameraId) => {
   }
   VoxImplant.Hardware.CameraManager.get().setDefaultVideoSettings({ cameraId });
 };
+
+const changeSpeaker = (outputId) => {
+  if (currentCall) {
+    VoxImplant.Hardware.AudioDeviceManager.get().setCallAudioSettings(currentCall, { outputId });
+  }
+  VoxImplant.Hardware.AudioDeviceManager.get().setDefaultAudioSettings({ outputId });
+}

@@ -107,6 +107,14 @@ const callStateConnected = () => {
   document.getElementById('switch-start-video').classList.remove('disabled');
   document.getElementById('start-sending-video').disabled = false;
   document.getElementById('call-btn-transfer').onclick = createTransferCall;
+  document.addEventListener('keydown',(e)=>{
+    if(e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'&&currentCall){
+      const keysToSend = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*','#', 'a', 'b', 'c', 'd', 'e'];
+      if(keysToSend.includes(e.key)){
+        currentCall.sendTone(e.key);
+      }
+    }
+  })
 };
 
 // return UI elements to initial state before call
@@ -132,6 +140,11 @@ const callStateDisconnected = () => {
     .forEach((radio) => radio.classList.remove('disabled'));
   document.getElementById('one-to-one-call-btn').disabled = false;
   document.getElementById('conf-call-btn').disabled = false;
+  document.querySelectorAll('.select-selected').forEach(custSelect => {
+    custSelect.querySelector('.arrow').classList.remove('disabled');
+    custSelect.addEventListener('click', toggleSelectItems);
+  })
+isConference = false;
 };
 
 // return UI elements to initial state before call
@@ -176,7 +189,6 @@ const dropdown = () => {
       item.innerHTML = option.innerHTML;
       item.id = option.value;
       item.addEventListener('click', function (e) {
-        console.log('Toggle on item: ', this);
         e.stopPropagation();
         const currentNativeSelect = this.parentNode.parentNode.querySelector('select');
         const selectedItem = this.parentNode.previousSibling;
@@ -185,16 +197,14 @@ const dropdown = () => {
             currentNativeSelect.selectedIndex = i;
             selectedItem.innerHTML = this.innerHTML;
             selectedItem.id = this.id;
-            if (item.id !== 'Default' && this.parentNode.querySelector('#Default') !== null) {
-              this.parentNode.querySelector('#Default').remove();
+            if (item.id !== 'default' && this.parentNode.querySelector('#default') !== null) {
+              this.parentNode.querySelector('#default').remove();
             }
             const sameSelected = this.parentNode.querySelector('.same-as-selected');
             sameSelected !== null && sameSelected.removeAttribute('class');
-            console.log('Same as selected: ', sameSelected);
             this.setAttribute('class', 'same-as-selected');
           }
         }
-        console.log('Arrow to append ', arrow);
         selected.appendChild(arrow);
         selectedItem.click();
         currentNativeSelect.options[currentNativeSelect.selectedIndex].click();
@@ -202,33 +212,43 @@ const dropdown = () => {
       allItems.appendChild(item);
     }
     customSelect.appendChild(allItems);
-    selected.addEventListener('click', function (e) {
-      e.stopPropagation();
-      closeAllSelect(this);
-      console.log('Toggle on selected: ', selected);
-      this.nextSibling.classList.toggle('select-hide');
-      console.log('Arrow', this.previousSibling);
-      this.querySelector('.arrow').classList.toggle('opened');
+    selected.addEventListener('click', (e) => {
+      toggleSelectItems(e);
     });
   }
-  function closeAllSelect(element) {
-    const arrItems = [];
-    const items = document.getElementsByClassName('select-items');
-    const selected = document.getElementsByClassName('select-selected');
 
-    for (let i = 0; i < selected.length; i++) {
-      if (element == selected[i]) {
-        arrItems.push(i);
-      }
-    }
-    for (let i = 0; i < items.length; i++) {
-      if (arrItems.indexOf(i)) {
-        items[i].classList.add('select-hide');
-        items[i].previousSibling.querySelector('.arrow').classList.remove('opened');
-      }
-    }
-  }
   document.addEventListener('click', (e) => {
     closeAllSelect();
   });
 };
+const closeAllSelect = (element) => {
+  const arrItems = [];
+  const items = document.getElementsByClassName('select-items');
+  const selected = document.getElementsByClassName('select-selected');
+
+  for (let i = 0; i < selected.length; i++) {
+    if (element == selected[i]) {
+      arrItems.push(i);
+    }
+  }
+  for (let i = 0; i < items.length; i++) {
+    if (arrItems.indexOf(i)) {
+      items[i].classList.add('select-hide');
+      items[i].previousSibling.querySelector('.arrow').classList.remove('opened');
+    }
+  }
+}
+const toggleSelectItems = (e) => {
+  e.stopPropagation();
+  closeAllSelect(e.target);
+  e.target.nextSibling.classList.toggle('select-hide');
+  e.target.querySelector('.arrow').classList.toggle('opened');
+};
+
+const disableDropdownSelect = () => {
+  document.querySelectorAll('.select-selected').forEach(custSelect => {
+      custSelect.classList.add('disabled');
+      custSelect.querySelector('.arrow').classList.add('disabled');
+      custSelect.removeEventListener('click', toggleSelectItems);
+  })
+}
