@@ -1,9 +1,10 @@
+// create a call to conference
 const callConference = () => {
-  let destination = document.getElementById('input-number').value.trim();
-  if (!destination) return;
+  let number = document.getElementById('input-number').value.trim();
+  if (!number) return;
   cleanData();
   currentCall = sdk.callConference({
-    number: destination,
+    number,
     video: {
       sendVideo: document.getElementById('input-send_video_call').checked,
       receiveVideo: true,
@@ -13,16 +14,17 @@ const callConference = () => {
   });
   isConference = true;
   disableConnectingSettings();
-  setUpCall({ currentCall, isConf: true, destination });
+  setUpCall({ currentCall, number });
 };
 
+// create a call to conference as a viewer
 const joinAsViewer = () => {
-  let destination = document.getElementById('input-number').value.trim();
-  if (!destination) return;
+  let number = document.getElementById('input-number').value.trim();
+  if (!number) return;
   cleanData();
   if (sdk.joinAsViewer) {
-    currentCall = sdk.joinAsViewer(destination);
-    setUpCall({ currentCall, isConf: true, destination, viewer: true });
+    currentCall = sdk.joinAsViewer(number);
+    setUpCall({ currentCall, number, viewer: true });
   } else {
     logger.write("This SDK version doesn't allow to call as viewer");
   }

@@ -421,7 +421,6 @@ input:disabled {
         "media"
         "logger"
         "endpoints"
-        "reinvite";
 }
 @media (min-width: 760px){
     .page_action{
@@ -434,8 +433,7 @@ input:disabled {
             "remote_video remote_video remote_video local_video"
             "actions actions actions local_video"
             "logger logger logger ."
-            "endpoints endpoints endpoints ."
-            "reinvite reinvite reinvite .";
+            "endpoints endpoints endpoints .";
     }
 }
 .page_login h3 {
@@ -474,7 +472,6 @@ input:disabled {
 .action_bordered_holder { grid-area: actions; }
 .action_logger { grid-area: logger; }
 .action_endpoints { grid-area: endpoints; }
-.action_reinvite { grid-area: reinvite; }
 
 /*area specific style*/
 
@@ -570,14 +567,11 @@ video {
     color: #1F1C28;
 }
 
-/* dropdown */
-.custom-select {
-    width: 400px;
-    position: relative;
+/* Dropdown */
+select {
+    opacity: 0;
 }
-.custom-select select {
-    display: none;
-}
+
 .select-selected {
     border: 1px solid #662EFF;
     border-radius: 4px;
@@ -585,39 +579,27 @@ video {
     height: 40px;
     padding: 10px 40px 10px 12px;
     box-sizing: border-box;
-}
-.select-selected.disabled {
-    border: 1px solid #C7C8D9;
-
-}
-.arrow {
-    position: absolute;
-    left: 370px;
-    top: 16px;
-    width: 10px;
-    height: 5px;
     background-image: url("../assets/down.svg");
     background-repeat: no-repeat;
+    background-position: 370px;
 }
 
-.arrow.opened {
-    position: absolute;
-    left: 370px;
-    top: 16px;
-    width: 10px;
-    height: 5px;
+.select-selected.opened {
     background-image: url("../assets/up.svg");
     background-repeat: no-repeat;
+    background-position: 370px;
 }
-.arrow.disabled {
-    position: absolute;
-    left: 370px;
-    top: 16px;
-    width: 10px;
-    height: 5px;
+
+.select-selected.disabled {
     background-image: url("../assets/disabled-down.svg");
     background-repeat: no-repeat;
+    background-position: 370px;
 }
+
+.select-selected.disabled {
+    border: 1px solid #C7C8D9;
+}
+
 .select-items div {
     width: 400px;
     padding: 8px 16px;
@@ -638,9 +620,7 @@ video {
     box-shadow: 0px 2px 8px rgba(40, 41, 61, 0.04), 0px 16px 24px rgba(96, 97, 112, 0.16);
     border-radius: 4px;
 }
-.select-hide {
-    display: none;
-}
+
 .select-items div:hover, .same-as-selected {
     background-color: #F2F2F5;
 }
