@@ -1,112 +1,124 @@
+const inputNumber = document.getElementById('input-number');
+const inputNumberTransfer = document.getElementById('input-number-transfer');
+const callButton = document.getElementById('call-btn');
+const oneToOneCallSelect = document.getElementById('one-to-one-call-btn');
+const conferenceCallSelect = document.getElementById('conf-call-btn');
+const joinAsViewerButton = document.getElementById('viewer-button');
+const showLocalVideoInput = document.getElementById('show-local-video-switch');
+const startSendingVideoInput = document.getElementById('start-sending-video');
+const startSendingVideoSwitchGroup = document.getElementById('switch-start-video');
+const shareButton = document.getElementById('start-sharing');
+const holdButton = document.getElementById('hold-btn');
+const muteInput = document.getElementById('mute');
+const muteSwitchGroup = document.getElementById('switch-mute');
+const callOrConferenceRadioSelectors = document.querySelectorAll('.radio-container');
+const sendVideoCheck = document.getElementById('input-send_video_call');
+const H264Check = document.getElementById('input-h264_call');
+const simulcastCheck = document.getElementById('input-simulcast');
+const callButtonsGroup = document.getElementById('call-btn-group');
+const declineButtonGroup = document.getElementById('decline-btn-group');
+const transferButton = document.getElementById('transfer');
+const callTransferButton = document.getElementById('call-btn-transfer');
+const simulcastContainer = document.getElementById('input-simulcast-container');
+const connectingBoard = document.querySelector('.action_connecting');
+const transferBoard = document.querySelector('.action_transfer');
+const backToCallButton = document.getElementById('back-to-call-btn');
+const sendVideoIncomingCall = document.getElementById('input-send_video_incoming_call');
+const showLocalVideoCheck = document.getElementById('input-show-local-video');
+const replaceVideoCheck = document.getElementById('input-replace-video');
+const stopSharingButton = document.getElementById('stop-sharing');
+const transferButtonsGroup = document.getElementById('transfer-btn-group');
+const transferConfirmButtonGroup = document.getElementById('transfer-confirm-btn-group');
+const endpointsTable = document.getElementById('endpoints-table');
+
+
 // add listeners to access functionality
 const accessFunctionality = () => {
-  document.getElementById('call-btn').onclick = () => {
-    if (document.getElementById('one-to-one-call-btn').checked) {
-      createCall();
-    } else {
-      callConference();
-    }
-  };
-
-  document.getElementById('viewer-button').onclick = joinAsViewer;
-
-  document.getElementById('show-local-video-switch').onchange = showLocalVideo;
-
-  document.getElementById('start-sending-video').onchange = () => {
-    sendingVideo(currentCall, logger);
-  };
-  document.getElementById('start-sharing').onclick = () => startShare(currentCall);
-
-  document.getElementById('hold-btn').onclick = () =>
-    holdCall(currentCall, document.getElementById('hold-btn'));
-
-  // document.getElementById('change-microphone').onclick = () => changeMicrophone(currentCall);
-  //
-  // document.getElementById('change-camera').onclick = () => changeCamera(currentCall);
-
-  document.getElementById('mute').onchange = () => muteAudio(currentCall);
-
-  document.getElementById('end-call').onclick = () => {
-    currentCall.hangup();
-  };
+  callButton.onclick = oneToOneCallSelect.checked ? createCall : callConference;
+  joinAsViewerButton.onclick = joinAsViewer;
+  showLocalVideoInput.onchange = showLocalVideo;
+  startSendingVideoInput.onchange = sendingVideo;
+  shareButton.onclick = startShare;
+  holdButton.onclick = holdCall;
+  muteInput.onchange = muteAudio;
 };
 
 // disable connecting settings of the caller after call started
 const disableConnectingSettings = () => {
-  document.querySelectorAll('.radio-container').forEach((radio) => radio.classList.add('disabled'));
-  document.getElementById('input-number').disabled = true;
-  document.getElementById('input-send_video_call').disabled = true;
-  document.getElementById('input-h264_call').disabled = true;
-  document.getElementById('one-to-one-call-btn').disabled = true;
-  document.getElementById('input-simulcast').disabled = true;
-  document.getElementById('conf-call-btn').disabled = true;
-  document.getElementById('call-btn-group').classList.add('hidden');
-  document.getElementById('decline-btn-group').classList.remove('hidden');
-  if (document.getElementById('one-to-one-call-btn').checked) {
-    document.getElementById('transfer').classList.remove('hidden');
+  callOrConferenceRadioSelectors.forEach((radio) => radio.classList.add('disabled'));
+  inputNumber.disabled = true;
+  sendVideoCheck.disabled = true;
+  H264Check.disabled = true;
+  oneToOneCallSelect.disabled = true;
+  simulcastCheck.disabled = true;
+  conferenceCallSelect.disabled = true;
+  callButtonsGroup.classList.add('hidden');
+  declineButtonGroup.classList.remove('hidden');
+  if (oneToOneCallSelect.checked) {
+    transferButton.classList.remove('hidden');
   } else {
-    document.getElementById('hold-btn').classList.add('hidden');
+    holdButton.classList.add('hidden');
   }
 };
 
 // manages connecting view functionality
 const manageConnectingView = () => {
   // adds possibility to join as a viewer if call conference selected
-  document.getElementById('conf-call-btn').onchange = () => {
-    if (document.getElementById('conf-call-btn').checked) {
-      document.getElementById('viewer-button').classList.remove('hidden');
-      document.getElementById('input-simulcast-container').classList.remove('hidden');
+  conferenceCallSelect.onchange = () => {
+    if (conferenceCallSelect.checked) {
+      joinAsViewerButton.classList.remove('hidden');
+      simulcastContainer.classList.remove('hidden');
     }
   };
 
   // removes possibility to join as a viewer if call conference selected
-  document.getElementById('one-to-one-call-btn').onchange = () => {
-    if (document.getElementById('one-to-one-call-btn').checked) {
-      document.getElementById('viewer-button').classList.add('hidden');
-      document.getElementById('input-simulcast-container').classList.add('hidden');
+  oneToOneCallSelect.onchange = () => {
+    if (oneToOneCallSelect.checked) {
+      joinAsViewerButton.classList.add('hidden');
+      simulcastContainer.classList.add('hidden');
     }
   };
 
   // adds transfer action view
-  document.getElementById('transfer').onclick = () => {
-    document.querySelector('.action_connecting').classList.add('hidden');
-    document.querySelector('.action_transfer').classList.remove('hidden');
+  transferButton.onclick = () => {
+    connectingBoard.classList.add('hidden');
+    transferBoard.classList.remove('hidden');
   };
-  document.getElementById('transfer').onkeypress = () => {
-    document.querySelector('.action_connecting').classList.add('hidden');
-    document.querySelector('.action_transfer').classList.remove('hidden');
+  transferButton.onkeypress = () => {
+    connectingBoard.classList.add('hidden');
+    transferBoard.classList.remove('hidden');
   };
 
   // return call action view to connecting state
-  document.getElementById('back-to-call-btn').onclick = () => {
-    document.querySelector('.action_connecting').classList.remove('hidden');
-    document.querySelector('.action_transfer').classList.add('hidden');
+  backToCallButton.onclick = () => {
+    connectingBoard.classList.remove('hidden');
+    transferBoard.classList.add('hidden');
   };
 
   // return call action view to connecting state if transfer canceled
   document.getElementById('cancel-transfer-btn').onclick = () => {
-    document.querySelector('.action_connecting').classList.remove('hidden');
-    document.querySelector('.action_transfer').classList.add('hidden');
+    connectingBoard.classList.remove('hidden');
+    transferBoard.classList.add('hidden');
   };
 };
 
 // make available UI elements needed to manage call, share video and access to over functionality
 const callStateConnected = () => {
   if (
-    document.getElementById('input-send_video_call').checked ||
-    document.getElementById('input-send_video_incoming_call').checked
+    sendVideoCheck.checked ||
+    sendVideoIncomingCall.checked
   ) {
-    document.getElementById('start-sending-video').checked = true;
+    startSendingVideoInput.checked = true;
   }
-  document.getElementById('input-show-local-video').disabled = false;
-  document.getElementById('input-replace-video').disabled = false;
-  document.getElementById('start-sharing').disabled = false;
-  document.getElementById('stop-sharing').disabled = false;
-  document.getElementById('mute').disabled = false;
-  document.getElementById('switch-mute').classList.remove('disabled');
-  document.getElementById('switch-start-video').classList.remove('disabled');
-  document.getElementById('start-sending-video').disabled = false;
-  document.getElementById('call-btn-transfer').onclick = createTransferCall;
+  showLocalVideoCheck.disabled = false;
+  replaceVideoCheck.disabled = false;
+  shareButton.disabled = false;
+  stopSharingButton.disabled = false;
+  muteInput.disabled = false;
+  muteSwitchGroup.classList.remove('disabled');
+  startSendingVideoSwitchGroup.classList.remove('disabled');
+  startSendingVideoInput.disabled = false;
+  callTransferButton.onclick = createTransferCall;
   document.addEventListener('keydown',(e)=>{
     if(e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'&&currentCall){
       const keysToSend = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*','#', 'a', 'b', 'c', 'd', 'e'];
@@ -119,107 +131,48 @@ const callStateConnected = () => {
 
 // return UI elements to initial state before call
 const callStateDisconnected = () => {
-  document.getElementById('start-sending-video').checked = false;
-  document.getElementById('input-show-local-video').disabled = true;
-  document.getElementById('input-replace-video').disabled = true;
-  document.getElementById('start-sharing').disabled = true;
-  document.getElementById('stop-sharing').disabled = true;
-  document.getElementById('mute').disabled = true;
-  document.getElementById('start-sending-video').disabled = true;
-  document.getElementById('switch-mute').classList.add('disabled');
-  document.getElementById('switch-start-video').classList.add('disabled');
-  document.getElementById('input-number').disabled = false;
-  document.getElementById('input-number-transfer').disabled = false;
-  document.getElementById('transfer').classList.add('hidden');
-  document.getElementById('input-number').disabled = false;
-  document.getElementById('input-send_video_call').disabled = false;
-  document.getElementById('input-h264_call').disabled = false;
-  document.getElementById('input-simulcast').disabled = false;
-  document
-    .querySelectorAll('.radio-container')
-    .forEach((radio) => radio.classList.remove('disabled'));
-  document.getElementById('one-to-one-call-btn').disabled = false;
-  document.getElementById('conf-call-btn').disabled = false;
-  document.querySelectorAll('.select-selected').forEach(custSelect => {
-    custSelect.querySelector('.arrow').classList.remove('disabled');
-    custSelect.addEventListener('click', toggleSelectItems);
-  })
-isConference = false;
+  enableDropdownSelect();
+  startSendingVideoInput.checked = false;
+  showLocalVideoCheck.disabled = true;
+  replaceVideoCheck.disabled = true;
+  shareButton.disabled = true;
+  stopSharingButton.disabled = true;
+  muteInput.disabled = true;
+  startSendingVideoInput.disabled = true;
+  muteSwitchGroup.classList.add('disabled');
+  startSendingVideoSwitchGroup.classList.add('disabled');
+  inputNumber.disabled = false;
+  inputNumberTransfer.disabled = false;
+  transferButton.classList.add('hidden');
+  sendVideoCheck.disabled = false;
+  H264Check.disabled = false;
+  simulcastCheck.disabled = false;
+  callOrConferenceRadioSelectors.forEach((radio) => radio.classList.remove('disabled'));
+  oneToOneCallSelect.disabled = false;
+  conferenceCallSelect.disabled = false;
+  isConference = false;
 };
 
 // return UI elements to initial state before call
 const transferCallStateDisconnected = () => {
-  document.getElementById('input-number-transfer').disabled = false;
-  document.getElementById('transfer-btn-group').classList.remove('hidden');
-  document.getElementById('transfer-confirm-btn-group').classList.add('hidden');
-  document.querySelector('.action_connecting').classList.remove('hidden');
-  document.querySelector('.action_transfer').classList.add('hidden');
+  inputNumberTransfer.disabled = false;
+  transferButtonsGroup.classList.remove('hidden');
+  transferConfirmButtonGroup.classList.add('hidden');
+  connectingBoard.classList.remove('hidden');
+  transferBoard.classList.add('hidden');
 };
 
 // enable/disable possibility to change sharing settings depending on sharing state
 const changeAccessToSharingElements = (access = false) => {
-  document.getElementById('start-sharing').disabled = access;
-  document.getElementById('input-show-local-video').disabled = access;
-  document.getElementById('input-replace-video').disabled = access;
+  shareButton.disabled = access;
+  showLocalVideoCheck.disabled = access;
+  replaceVideoCheck.disabled = access;
 };
 
-// clear fields with logs, endpoints info, reinvite info
+// clear fields with logs, endpoints info
 const cleanData = () => {
   logger.clear();
-  document.getElementById('endpoints-table').innerHTML = '';
-  document.getElementById('action_reinvite').innerHTML = '';
-};
-
-const dropdown = () => {
-  const customSelects = document.getElementsByClassName('custom-select');
-  for (const customSelect of customSelects) {
-    const nativeSelect = customSelect.querySelector('select');
-    const selected = document.createElement('div');
-    selected.setAttribute('class', 'select-selected');
-    selected.id = nativeSelect.options[nativeSelect.selectedIndex].value;
-    selected.innerHTML = nativeSelect.options[nativeSelect.selectedIndex].innerHTML;
-    customSelect.appendChild(selected);
-    const arrow = document.createElement('div');
-    arrow.setAttribute('class', 'arrow');
-    selected.appendChild(arrow);
-    const allItems = document.createElement('div');
-    allItems.setAttribute('class', 'select-items select-hide');
-    for (const option of nativeSelect.options) {
-      const item = document.createElement('div');
-      item.innerHTML = option.innerHTML;
-      item.id = option.value;
-      item.addEventListener('click', function (e) {
-        e.stopPropagation();
-        const currentNativeSelect = this.parentNode.parentNode.querySelector('select');
-        const selectedItem = this.parentNode.previousSibling;
-        for (let i = 0; i < currentNativeSelect.length; i++) {
-          if (currentNativeSelect.options[i].innerHTML == this.innerHTML) {
-            currentNativeSelect.selectedIndex = i;
-            selectedItem.innerHTML = this.innerHTML;
-            selectedItem.id = this.id;
-            if (item.id !== 'default' && this.parentNode.querySelector('#default') !== null) {
-              this.parentNode.querySelector('#default').remove();
-            }
-            const sameSelected = this.parentNode.querySelector('.same-as-selected');
-            sameSelected !== null && sameSelected.removeAttribute('class');
-            this.setAttribute('class', 'same-as-selected');
-          }
-        }
-        selected.appendChild(arrow);
-        selectedItem.click();
-        currentNativeSelect.options[currentNativeSelect.selectedIndex].click();
-      });
-      allItems.appendChild(item);
-    }
-    customSelect.appendChild(allItems);
-    selected.addEventListener('click', (e) => {
-      toggleSelectItems(e);
-    });
-  }
-
-  document.addEventListener('click', (e) => {
-    closeAllSelect();
-  });
+  endpointsTable.innerHTML = '';
 };
 const closeAllSelect = (element) => {
   const arrItems = [];

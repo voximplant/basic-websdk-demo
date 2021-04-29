@@ -1,32 +1,34 @@
 // stop share screen
-const stopShare = (call) => {
+const stopShare = () => {
   document.querySelector('.white-circle').classList.contains('hidden') &&
     document.querySelector('.white-circle').classList.remove('hidden');
-  if (call !== null) {
-    call
+  if (currentCall !== null) {
+    currentCall
       .stopSharingScreen()
       .then((e) => {
         changeAccessToSharingElements();
         logger.write('Sharing detached');
       })
-      .catch((e) => {});
+      .catch((e) => {
+        logger.write(e);
+      });
   }
 };
 
 // start share screen, with options: replacing current video, showing shared screen in local video, depending on user settings selected
-const startShare = (call) => {
-  if (call !== null) {
+const startShare = () => {
+  if (currentCall !== null) {
     const showLocalVideo = document.getElementById('input-show-local-video').checked;
     const replaceVideo = document.getElementById('input-replace-video').checked;
     showLocalVideo && document.querySelector('.white-circle').classList.add('hidden');
-    call
+    currentCall
       .shareScreen(showLocalVideo, replaceVideo)
       .then((e) => {
         logger.write('Sharing attached');
         changeAccessToSharingElements(true);
-        document.getElementById('stop-sharing').onclick = () => stopShare(call);
+        document.getElementById('stop-sharing').onclick = stopShare;
 
-        const transceivers = call.peerConnection.getTransceivers();
+        const transceivers = currentCall.peerConnection.getTransceivers();
         const transceiverSharing = transceivers.find((transceiver) => {
           return (
             transceiver.sender.track !== null && transceiver.sender.track.label.includes('screen')
@@ -65,12 +67,12 @@ const showLocalVideo = () => {
 };
 
 // start showing video if it was not started when call was initialized, or stop it if it is now showing
-const sendingVideo = (call, logger) => {
+const sendingVideo = () => {
   const isSendingVideo =
     document.getElementById('show-local-video-switch').checked ||
     document.getElementById('start-sending-video').checked;
-  if (call) {
-    call
+  if (currentCall) {
+    currentCall
       .sendVideo(isSendingVideo)
       .then(() => {
         logger.write(`Resolved sendVideo(${isSendingVideo})`);
@@ -83,12 +85,12 @@ const sendingVideo = (call, logger) => {
 };
 
 // mute/unmute audio
-const muteAudio = (call) => {
+const muteAudio = () => {
   if (document.getElementById('mute').checked) {
-    call && call.muteMicrophone();
+    currentCall && currentCall.muteMicrophone();
     console.log('Muted');
   } else {
-    call && call.unmuteMicrophone();
+    currentCall && currentCall.unmuteMicrophone();
     console.log('Unmuted');
   }
 };

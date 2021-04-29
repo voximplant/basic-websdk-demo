@@ -1,7 +1,7 @@
 const handleIncomingCall = ({ call }) => {
   cleanData();
   currentCall = call;
-  setUpCall({ currentCall, isIncoming: true, destination: call.number() });
+  setUpCall({ currentCall, isIncoming: true, number: call.number() });
   document.getElementById('incoming-call').classList.remove('hidden');
   document.getElementById('caller-number').innerText = call.number();
   document.querySelector('.close-incoming-window').onclick = () => {
@@ -25,11 +25,16 @@ const handleIncomingCall = ({ call }) => {
 };
 
 const createCall = () => {
-  const destination = document.getElementById('input-number').value.trim();
-  if (!destination) return;
+  const numberInput = document.getElementById('input-number');
+  const number = numberInput.value.trim();
+  if (!number) {
+    numberInput.classList.add('invalid');
+    numberInput.onkeypress = () => numberInput.classList.remove('invalid');
+    return;
+  }
   cleanData();
   currentCall = sdk.call({
-    number: destination,
+    number,
     video: {
       sendVideo: document.getElementById('input-send_video_call').checked,
       receiveVideo: true,
@@ -39,13 +44,19 @@ const createCall = () => {
 
   disableConnectingSettings();
 
-  setUpCall({ currentCall, destination });
+  setUpCall({ currentCall, number });
 };
 
 const createTransferCall = () => {
-  const destination = document.getElementById('input-number-transfer').value;
+  const numberInput = document.getElementById('input-number-transfer');
+  const number = numberInput.value;
+  if (!number) {
+    numberInput.classList.add('invalid');
+    numberInput.onkeypress = () => numberInput.classList.remove('invalid');
+    return;
+  }
   transferCall = sdk.call({
-    number: destination,
+    number,
     video: {
       sendVideo: document.getElementById('input-send_video_call-transfer').checked,
       receiveVideo: true,
@@ -57,7 +68,7 @@ const createTransferCall = () => {
   document.getElementById('transfer-btn-group').classList.add('hidden');
   document.getElementById('transfer-confirm-btn-group').classList.remove('hidden');
 
-  transferCall.addEventListener(VoxImplant.CallEvents.Connected, (e) => {
+  transferCall.addEventListener(VoxImplant.CallEvents.Connected, () => {
     transferCall.setActive(true);
     document.getElementById('confirm-transfer-btn').addEventListener('click', () => {
       sdk.transferCall(currentCall, transferCall);
@@ -71,23 +82,25 @@ const createTransferCall = () => {
     transferCallStateDisconnected();
   });
 
-  transferCall.addEventListener(VoxImplant.CallEvents.Failed, (e) => {
+  transferCall.addEventListener(VoxImplant.CallEvents.Failed, () => {
     transferCallStateDisconnected();
   });
 };
 
-const setUpCall = ({ currentCall, isIncoming, destination, viewer }) => {
+const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
   let prefix = isConference ? 'Call conference to' : 'Call to';
   if (isIncoming) prefix = 'Incoming call from';
-  logger.write(`${prefix} ${destination}...`);
-
+  logger.write(`${prefix} ${number}...`);
+  document.getElementById('end-call').onclick = () => {
+    currentCall.hangup();
+  }
   currentCall.addEventListener(VoxImplant.CallEvents.EndpointAdded, onEndpointAdded);
 
   currentCall.addEventListener(VoxImplant.CallEvents.Updated, (e) => {
     logger.write(`CALL UPDATED: ${simpleStringify(e)}`);
   });
 
-  currentCall.addEventListener(VoxImplant.CallEvents.Connected, (e) => {
+  currentCall.addEventListener(VoxImplant.CallEvents.Connected, () => {
     if (isIncoming || viewer) {
       disableConnectingSettings();
     }
@@ -100,7 +113,7 @@ const setUpCall = ({ currentCall, isIncoming, destination, viewer }) => {
   });
 
   currentCall.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
-    logger.write(`${prefix} ${destination} was disconnected`);
+    logger.write(`${prefix} ${number} was disconnected`);
     document.getElementById('decline-btn-group').classList.add('hidden');
     document.getElementById('call-btn-group').classList.remove('hidden');
     callStateDisconnected();
@@ -118,14 +131,15 @@ const setUpCall = ({ currentCall, isIncoming, destination, viewer }) => {
   });
 };
 
-const holdCall = (call, button) => {
-  if (call) {
-    if (button.innerText === 'Unhold') {
-      button.innerText = 'Hold';
-      call.setActive(true);
+const holdCall = () => {
+  const holdButton = document.getElementById('hold-btn')
+  if (currentCall) {
+    if (holdButton.innerText === 'Unhold') {
+      holdButton.innerText = 'Hold';
+      currentCall.setActive(true);
     } else {
-      button.innerText = 'Unhold';
-      call.setActive(false);
+      holdButton.innerText = 'Unhold';
+      currentCall.setActive(false);
     }
   }
 };

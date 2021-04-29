@@ -3,7 +3,6 @@ const lastData = {};
 const serverIpInput = document.getElementById('input-server-ip');
 const debugInfoInput = document.getElementById('input-debug');
 const connectivityCheckInput = document.getElementById('input-connectivity');
-const logger = new cLogger(document.getElementById('logarea'));
 const userNameInput = document.getElementById('input-username');
 const passwordInput = document.getElementById('input-password');
 
@@ -52,32 +51,34 @@ const login = async () => {
     lastDataFromLocalStorage && lastDataFromLocalStorage.serverIps.length
       ? lastDataFromLocalStorage.serverIps
       : [];
-  lastData.serverIps = Array.from(new Set([...serverIps, serverIpInput.value].filter((i) => i.length > 1)));
-  lastData.username = userNameInput.value;
-  lastData.password = passwordInput.value;
+  const username = userNameInput.value;
+  const password = passwordInput.value
+  lastData.username = username;
+  lastData.password = password;
   lastData.serverIp = serverIpInput.value;
+  lastData.serverIps = serverIps;
   lastData.isDebugInfo = debugInfoInput.checked;
   lastData.connectivityCheck = connectivityCheckInput.checked;
-
-  if (sdk.alreadyInitialized && sdk.getClientState() === VoxImplant.ClientState.CONNECTED) {
-    await signIn(userNameInput.value, passwordInput.value);
-  } else if (sdk.alreadyInitialized) {
-    await signIn(userNameInput.value, passwordInput.value);
+// reconnect to Voximplant Cloud if connection was closed because of network problems
+  sdk.on(VoxImplant.Events.ConnectionClosed, () => {
+    connectToVoxCloud(username, password);
+  });
+  if (sdk.alreadyInitialized) {
+    await signIn(username, password);
   } else {
-    await init();
+    await init(username, password);
   }
 
-  if (sdk.getClientState() === VoxImplant.ClientState.DISCONNECTED) {
-    lastData.serverIps.pop();
+  if (sdk.getClientState() === VoxImplant.ClientState.LOGGED_IN) {
+    lastData.serverIps = Array.from(new Set([...serverIps, lastData.serverIp]));
   }
     localStorage.setItem('lastData', JSON.stringify(lastData));
 };
 
 
-const init = async () => {
+const init = async (username, password) => {
   try {
     await sdk.init({
-      // TODO: @irgalamarr clear when calls finished
       localVideoContainerId: 'local_video_holder', // Id of HTMLElement that will be used as a default container for local video elements
       serverIp: serverIpInput.value, // IP address of particular media gateway for connection, if it's not specified IP address will be chosen automatically
       showDebugInfo: debugInfoInput.checked, // Show debug info in console
@@ -85,10 +86,10 @@ const init = async () => {
   } catch (e) {
     console.error('Failed to initialize');
   }
-  await connectToVoxCloud();
+  await connectToVoxCloud(username, password);
 };
 
-const connectToVoxCloud = async (isRepeated = false) => {
+const connectToVoxCloud = async (username, password) => {
   try {
     await sdk.connect();
     localStorage.setItem('lastConnection', JSON.stringify({ connected: true }));
@@ -97,17 +98,15 @@ const connectToVoxCloud = async (isRepeated = false) => {
     window.location.reload();
     return;
   }
-  let user = isRepeated ? currentUser : userNameInput.value;
-  let pass = isRepeated ? currentPass : passwordInput.value;
-  await signIn(user, pass);
+  if (!username) username = userNameInput.value;
+  if (!password) password = passwordInput.value;
+  await signIn(username, password);
 };
 
-const signIn = async (user, pass) => {
+const signIn = async (username, password) => {
   try {
-    await sdk.login(user, pass);
-    currentPass = pass;
-    currentUser = user;
-    logger.write(`Signed in as ${user}`);
+    await sdk.login(username, password);
+    logger.write(`Signed in as ${username}`);
     userNameInput.value = '';
     passwordInput.value = '';
     serverIpInput.value = '';
@@ -115,16 +114,18 @@ const signIn = async (user, pass) => {
     document.querySelector('.page_login').classList.add('hidden');
     document.querySelector('.page_action').classList.remove('hidden');
 
-    document.querySelector('.action_auth-data').innerHTML = `<h2>Logged in as ${user}</h2>`;
+    document.querySelector('.action_auth-data').innerHTML = `<h2>Logged in as ${username}</h2>`;
     if (serverIpInput.value.length)
       document.querySelector(
         '.action_auth-data'
-      ).innerHTML = `<h2>Logged in as ${user} at ${serverIpInput.value}</h2>`;
+      ).innerHTML = `<h2>Logged in as ${username} at ${serverIpInput.value}</h2>`;
   } catch (e) {
+    console.log('Login failed, error code', e.code);
     userNameInput.classList.add('invalid');
     passwordInput.classList.add('invalid');
   }
 };
+
 
 const inputAuthDataProcessing = () => {
   document.querySelector('.visibility').addEventListener('click', () => {
