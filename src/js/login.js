@@ -83,6 +83,7 @@ const init = async (username, password) => {
 const connectToVoxCloud = async (username, password, connectivityCheck = false) => {
   try {
     await sdk.connect(connectivityCheck);
+    localStorage.setItem('lastConnection', JSON.stringify({ connected: true }));
   } catch (e) {
     // disable inputs if server IP is incorrect or if it's impossible to connect to the server with connectivity check on
     serverIpInput.classList.add('invalid');
