@@ -43,13 +43,12 @@ const startShare = () => {
       })
       .catch((e) => {
         document.querySelector('.white-circle').classList.remove('hidden');
-        console.error(e);
         logger.write(e.message);
       });
   }
 };
 
-//render local video
+// render local video
 const showLocalVideo = () => {
   const isShow = document.getElementById('show-local-video-switch').checked;
   try {
@@ -62,15 +61,12 @@ const showLocalVideo = () => {
     }
   } catch (e) {
     logger.write('ERROR Local video already displayed');
-    console.error('Reject showLocalVideo', e);
   }
 };
 
 // start showing video if it was not started when call was initialized, or stop it if it is now showing
 const sendingVideo = () => {
-  const isSendingVideo =
-    document.getElementById('show-local-video-switch').checked ||
-    document.getElementById('start-sending-video').checked;
+  const isSendingVideo = document.getElementById('start-sending-video').checked;
   if (currentCall) {
     currentCall
       .sendVideo(isSendingVideo)
@@ -79,7 +75,6 @@ const sendingVideo = () => {
       })
       .catch((e) => {
         logger.write(`ERROR Reject sendVideo(${isSendingVideo})`);
-        console.error(`Reject sendVideo(${isSendingVideo})`, e);
       });
   }
 };
@@ -88,9 +83,7 @@ const sendingVideo = () => {
 const muteAudio = () => {
   if (document.getElementById('mute').checked) {
     currentCall && currentCall.muteMicrophone();
-    console.log('Muted');
   } else {
     currentCall && currentCall.unmuteMicrophone();
-    console.log('Unmuted');
   }
 };

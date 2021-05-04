@@ -422,7 +422,7 @@ input:disabled {
         "logger"
         "endpoints"
 }
-@media (min-width: 760px){
+@media (min-width: 850px){
     .page_action{
         padding: 24px;
         grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -474,6 +474,25 @@ input:disabled {
 .action_endpoints { grid-area: endpoints; }
 
 /*area specific style*/
+.action_remote-video {
+    position: relative;
+}
+
+.timer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 2px 6px;
+    position: absolute;
+    width: 47px;
+    height: 24px;
+    right: 12px;
+    top: 50px;
+    background: rgba(31, 28, 40, 0.7);
+    border-radius: 4px;
+    color: #FFFFFF;
+}
 
 .remote-video-holder{
     display: grid;
@@ -573,6 +592,7 @@ select {
 }
 
 .select-selected {
+    cursor: pointer;
     border: 1px solid #662EFF;
     border-radius: 4px;
     width: 400px;
@@ -582,6 +602,9 @@ select {
     background-image: url("../assets/down.svg");
     background-repeat: no-repeat;
     background-position: 370px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .select-selected.opened {
@@ -608,6 +631,9 @@ select {
     cursor: pointer;
     user-select: none;
     box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .select-items {
     position: absolute;

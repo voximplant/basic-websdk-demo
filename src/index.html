@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Demo Conference</title>
+    <title>WebSDK Demo</title>
     <link rel="stylesheet" href="style/normalize.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
@@ -106,6 +106,8 @@
         <h3>Incoming video</h3>
         <div class="remote-video-holder empty" id="remote_video_holder">
         </div>
+        <div class="timer">00:00:00
+        </div>
       </div>
 <!--      End of remote video -->
 
@@ -118,19 +120,8 @@
 
 <!--        Media settings -->
         <div class="action_media-selector">
-          <div class="media-selector_block-microphone">
-            <label for="change-microphone">Change microphone</label>
-            <select name="microphone" id="change-microphone">
-            </select>
-            <div class="custom-select microphone">
-              <div class="select-selected selected-microphone">
-              </div>
-              <div class="microphone-items select-items hidden">
-              </div>
-            </div>
-          </div>
           <div class="media-selector_block-camera">
-            <label for="change-camera">Change camera</label>
+            <label for="change-camera">Camera</label>
             <select name="camera" id="change-camera">
             </select>
             <div class="custom-select camera">
@@ -140,8 +131,19 @@
               </div>
             </div>
           </div>
+          <div class="media-selector_block-microphone">
+            <label for="change-microphone">Microphone</label>
+            <select name="microphone" id="change-microphone">
+            </select>
+            <div class="custom-select microphone">
+              <div class="select-selected selected-microphone">
+              </div>
+              <div class="microphone-items select-items hidden">
+              </div>
+            </div>
+          </div>
           <div class="media-selector_block-speaker">
-            <label for="change-speaker">Change speaker (output device)</label>
+            <label for="change-speaker">Speaker</label>
             <select name="speaker" id="change-speaker">
             </select>
             <div class="custom-select speaker">
@@ -324,11 +326,12 @@
 <!--      End of endpoints section-->
     </div>
 <!--ENd of action page -->
-    <script src="https://unpkg.com/voximplant-websdk"></script>
+<!--    <script src="https://unpkg.com/voximplant-websdk"></script>-->
+    <script src="https://demos05.voximplant.com/cdn/voximplant.js"></script>
+    <script src="js/timer.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/dropdown-list.js"></script>
     <script src="js/actions.js"></script>
-    <script src='js/loggers.js'></script>
     <script src="js/endpoints.js"></script>
     <script src="js/manage-mediastreams.js"></script>
     <script src="js/login.js"></script>

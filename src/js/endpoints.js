@@ -5,7 +5,6 @@ const endpointsMedia = {};
 
 // handles endpoint added
 const onEndpointAdded = ({ endpoint }) => {
-  console.warn('Endpoint added: ', endpoint);
   endpointsMedia[endpoint.id] = [];
 
   // create an element representing a table row
@@ -24,8 +23,6 @@ const onEndpointAdded = ({ endpoint }) => {
 
 // handle remote media stream added
 const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
-  console.warn('MediaRenderer added: ', mediaRenderer);
-
   // replacing sharing with video as both of them will be shown as video streams in table with endpoints
   const mediaRendererKind = mediaRenderer.kind.replace('sharing', 'video');
 
@@ -42,7 +39,7 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
     }
 
     // remove black window if a video stream is added
-    if(mediaRendererKind === 'video' && document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null) {
+    if (mediaRendererKind === 'video' && document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null) {
       document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
     }
 
@@ -50,6 +47,19 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
     const videoHolder = document.querySelector('.remote-video-holder');
     mediaRenderer.render(videoHolder);
   }
+
+  mediaRenderer.element.addEventListener('click', (event) => {
+    if (event.ctrlKey || event.altKey) {
+      if (event.shiftKey) {
+        mediaRenderer.requestVideoSize(1920, 1080)
+      } else {
+        if (mediaRenderer.videoSize && mediaRenderer.videoSize.width && mediaRenderer.videoSize.height) { mediaRenderer.requestVideoSize(mediaRenderer.videoSize.width / 2, mediaRenderer.videoSize.height / 2) } else { mediaRenderer.requestVideoSize(1920, 1080) }
+      }
+    } else {
+      if (mediaRenderer.enabled) { mediaRenderer.disable(); } else { mediaRenderer.enable(); }
+    }
+  })
+  mediaRenderer.placed = true;
 
   // add media id in table with endpoints
   let endpointCell = document.querySelector(
@@ -79,11 +89,8 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
   endpointCell.classList.remove(`${endpoint.id}-${mediaRendererKind}`);
 };
 
-
 // handle remote media removed
 const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
-  console.warn('MediaRenderer removed: ', mediaRenderer);
-
   // if this is not user's endpoint, check if there is no more video streams and show black window in this case
   if (!endpoint.isDefault || !isConference) {
     const indexMedia = endpointsMedia[endpoint.id].indexOf(mediaRenderer.kind);

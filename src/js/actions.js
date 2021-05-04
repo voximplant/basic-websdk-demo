@@ -30,7 +30,7 @@ const stopSharingButton = document.getElementById('stop-sharing');
 const transferButtonsGroup = document.getElementById('transfer-btn-group');
 const transferConfirmButtonGroup = document.getElementById('transfer-confirm-btn-group');
 const endpointsTable = document.getElementById('endpoints-table');
-
+const timer = document.querySelector('.timer');
 
 // add listeners to access functionality
 const accessFunctionality = () => {
@@ -119,10 +119,10 @@ const callStateConnected = () => {
   startSendingVideoSwitchGroup.classList.remove('disabled');
   startSendingVideoInput.disabled = false;
   callTransferButton.onclick = createTransferCall;
-  document.addEventListener('keydown',(e)=>{
-    if(e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'&&currentCall){
-      const keysToSend = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*','#', 'a', 'b', 'c', 'd', 'e'];
-      if(keysToSend.includes(e.key)){
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && currentCall) {
+      const keysToSend = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#', 'a', 'b', 'c', 'd', 'e'];
+      if (keysToSend.includes(e.key)) {
         currentCall.sendTone(e.key);
       }
     }
@@ -173,35 +173,5 @@ const changeAccessToSharingElements = (access = false) => {
 const cleanData = () => {
   logger.clear();
   endpointsTable.innerHTML = '';
+  timer.innerText = '00:00:00';
 };
-const closeAllSelect = (element) => {
-  const arrItems = [];
-  const items = document.getElementsByClassName('select-items');
-  const selected = document.getElementsByClassName('select-selected');
-
-  for (let i = 0; i < selected.length; i++) {
-    if (element == selected[i]) {
-      arrItems.push(i);
-    }
-  }
-  for (let i = 0; i < items.length; i++) {
-    if (arrItems.indexOf(i)) {
-      items[i].classList.add('select-hide');
-      items[i].previousSibling.querySelector('.arrow').classList.remove('opened');
-    }
-  }
-}
-const toggleSelectItems = (e) => {
-  e.stopPropagation();
-  closeAllSelect(e.target);
-  e.target.nextSibling.classList.toggle('select-hide');
-  e.target.querySelector('.arrow').classList.toggle('opened');
-};
-
-const disableDropdownSelect = () => {
-  document.querySelectorAll('.select-selected').forEach(custSelect => {
-      custSelect.classList.add('disabled');
-      custSelect.querySelector('.arrow').classList.add('disabled');
-      custSelect.removeEventListener('click', toggleSelectItems);
-  })
-}
