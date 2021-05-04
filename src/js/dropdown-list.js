@@ -24,14 +24,13 @@ const addToDropdown = (device, selectElement, selected, items) => {
 
 // hide/show a list of devices
 const toggleDropdown = (e) => {
-  console.log('Not disabled', e.target);
   e.target.nextElementSibling.classList.toggle('hidden');
   e.target.classList.toggle('opened');
 }
 
 // disable selecting another device
 const disableDropdownSelect = () => {
-  for (let element of document.getElementsByClassName('select-selected')) {
+  for (const element of document.getElementsByClassName('select-selected')) {
     element.classList.add('disabled');
     element.removeEventListener('click', toggleDropdown);
   }
@@ -39,7 +38,7 @@ const disableDropdownSelect = () => {
 
 // enable selecting another device
 const enableDropdownSelect = () => {
-  for (let element of document.getElementsByClassName('select-selected')) {
+  for (const element of document.getElementsByClassName('select-selected')) {
     element.classList.remove('disabled');
     element.addEventListener('click', toggleDropdown);
   }

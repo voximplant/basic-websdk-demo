@@ -1,4 +1,4 @@
-function simpleStringify(object) {
+function simpleStringify (object) {
   const simpleObject = Object.keys(object)
     .filter((item) => typeof object[item] === 'string')
     .reduce((acc, item) => {
@@ -8,8 +8,8 @@ function simpleStringify(object) {
   return JSON.stringify(simpleObject);
 }
 
-//Logging into a textarea
-const cLogger = function (element) {
+// Logging into a textarea
+const Logger = function (element) {
   const logRecords = [];
   const textArea = element;
   this.write = function (logRecord) {
@@ -21,7 +21,7 @@ const cLogger = function (element) {
     textArea.value = '';
   };
 
-  function render() {
+  function render () {
     textArea.value = logRecords.join('\r\n');
     textArea.scrollTop = textArea.scrollHeight;
   }

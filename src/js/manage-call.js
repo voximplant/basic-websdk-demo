@@ -14,17 +14,19 @@ const handleIncomingCall = ({ call }) => {
         {},
         {
           sendVideo: document.getElementById('input-send_video_incoming_call').checked,
-          receiveVideo: true,
+          receiveVideo: true
         }
       );
     document.getElementById('incoming-call').classList.add('hidden');
   };
   document.getElementById('incoming-call-decline').onclick = () => {
+    document.querySelector('.incoming-call').classList.add('hidden');
     call && call.decline();
   };
 };
 
 const createCall = () => {
+  cleanData();
   const numberInput = document.getElementById('input-number');
   const number = numberInput.value.trim();
   if (!number) {
@@ -32,14 +34,13 @@ const createCall = () => {
     numberInput.onkeypress = () => numberInput.classList.remove('invalid');
     return;
   }
-  cleanData();
   currentCall = sdk.call({
     number,
     video: {
       sendVideo: document.getElementById('input-send_video_call').checked,
-      receiveVideo: true,
+      receiveVideo: true
     },
-    H264first: document.getElementById('input-h264_call'),
+    H264first: document.getElementById('input-h264_call')
   });
 
   disableConnectingSettings();
@@ -59,11 +60,11 @@ const createTransferCall = () => {
     number,
     video: {
       sendVideo: document.getElementById('input-send_video_call-transfer').checked,
-      receiveVideo: true,
+      receiveVideo: true
     },
-    H264first: document.getElementById('input-h264_call-transfer'),
+    H264first: document.getElementById('input-h264_call-transfer')
   });
-  holdCall(currentCall, document.getElementById('hold-btn'));
+  holdCall();
   document.getElementById('input-number-transfer').disabled = true;
   document.getElementById('transfer-btn-group').classList.add('hidden');
   document.getElementById('transfer-confirm-btn-group').classList.remove('hidden');
@@ -101,6 +102,7 @@ const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
   });
 
   currentCall.addEventListener(VoxImplant.CallEvents.Connected, () => {
+    startTimer();
     if (isIncoming || viewer) {
       disableConnectingSettings();
     }
@@ -113,6 +115,7 @@ const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
   });
 
   currentCall.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
+    stopTimer();
     logger.write(`${prefix} ${number} was disconnected`);
     document.getElementById('decline-btn-group').classList.add('hidden');
     document.getElementById('call-btn-group').classList.remove('hidden');

@@ -59,9 +59,9 @@ const login = async () => {
   lastData.serverIps = serverIps;
   lastData.isDebugInfo = debugInfoInput.checked;
   lastData.connectivityCheck = connectivityCheckInput.checked;
-// reconnect to Voximplant Cloud if connection was closed because of network problems
+  // reconnect to Voximplant Cloud if connection was closed because of network problems
   sdk.on(VoxImplant.Events.ConnectionClosed, () => {
-    connectToVoxCloud(username, password);
+    connectToVoxCloud(username, password, connectivityCheckInput.checked);
   });
   if (sdk.alreadyInitialized) {
     await signIn(username, password);
@@ -70,28 +70,26 @@ const login = async () => {
   }
 
   if (sdk.getClientState() === VoxImplant.ClientState.LOGGED_IN) {
-    lastData.serverIps = Array.from(new Set([...serverIps, lastData.serverIp]));
+    lastData.serverIps = Array.from(new Set([...serverIps, lastData.serverIp])).filter(server => server.length);
   }
-    localStorage.setItem('lastData', JSON.stringify(lastData));
+  localStorage.setItem('lastData', JSON.stringify(lastData));
 };
-
 
 const init = async (username, password) => {
   try {
     await sdk.init({
       localVideoContainerId: 'local_video_holder', // Id of HTMLElement that will be used as a default container for local video elements
       serverIp: serverIpInput.value, // IP address of particular media gateway for connection, if it's not specified IP address will be chosen automatically
-      showDebugInfo: debugInfoInput.checked, // Show debug info in console
+      showDebugInfo: debugInfoInput.checked // Show debug info in console
     });
   } catch (e) {
-    console.error('Failed to initialize');
   }
-  await connectToVoxCloud(username, password);
+  await connectToVoxCloud(username, password, connectivityCheckInput.checked);
 };
 
-const connectToVoxCloud = async (username, password) => {
+const connectToVoxCloud = async (username, password, connectivityCheck = false) => {
   try {
-    await sdk.connect();
+    await sdk.connect(connectivityCheck);
     localStorage.setItem('lastConnection', JSON.stringify({ connected: true }));
   } catch (e) {
     localStorage.setItem('lastConnection', JSON.stringify({ connected: false }));
@@ -115,17 +113,16 @@ const signIn = async (username, password) => {
     document.querySelector('.page_action').classList.remove('hidden');
 
     document.querySelector('.action_auth-data').innerHTML = `<h2>Logged in as ${username}</h2>`;
-    if (serverIpInput.value.length)
+    if (serverIpInput.value.length) {
       document.querySelector(
         '.action_auth-data'
       ).innerHTML = `<h2>Logged in as ${username} at ${serverIpInput.value}</h2>`;
+    }
   } catch (e) {
-    console.log('Login failed, error code', e.code);
     userNameInput.classList.add('invalid');
     passwordInput.classList.add('invalid');
   }
 };
-
 
 const inputAuthDataProcessing = () => {
   document.querySelector('.visibility').addEventListener('click', () => {

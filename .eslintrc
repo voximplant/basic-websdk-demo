@@ -1,0 +1,13 @@
+{
+  "root": true,
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "no-unused-vars": 0,
+    "no-debugger": 2,
+    "semi": 0,
+    "no-undef": 0,
+    "no-console": 2
+  }
+}
