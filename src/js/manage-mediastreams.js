@@ -51,13 +51,14 @@ const startShare = () => {
 // render local video
 const showLocalVideo = () => {
   const isShow = document.getElementById('show-local-video-switch').checked;
+  const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
   try {
     if (isShow) {
       sdk.showLocalVideo(true);
-      document.querySelector('.white-circle').classList.add('hidden');
+      noVideoSign.classList.add('hidden');
     } else {
       sdk.showLocalVideo(false);
-      document.querySelector('.white-circle').classList.remove('hidden');
+      noVideoSign.classList.remove('hidden');
     }
   } catch (e) {
     logger.write('ERROR Local video already displayed');
