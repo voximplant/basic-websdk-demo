@@ -37,6 +37,7 @@
 }
 
 .btn:disabled {
+    cursor: default;
     color: #C7C8D9;
 }
 
@@ -57,6 +58,7 @@
 }
 
 .btn__primary:disabled {
+    cursor: default;
     background: #ECDDFF;
     color: #FFFFFF;
 }
@@ -106,6 +108,10 @@
     line-height: 20px;
 }
 
+.form_group.disabled label {
+    color: #ABACC2;
+}
+
 /*checkbox*/
 .checkbox {
     display: inline-block;
@@ -114,6 +120,7 @@
 }
 
 .checkbox > input:disabled + label {
+    cursor: default;
     color: #ABACC2;
 }
 
@@ -163,6 +170,7 @@
     border: 1px solid #E3E4EB;
     background-color: #F2F2F5;
     vertical-align: text-bottom;
+    cursor: default;
 }
 
 .checkbox__large > input + label:before {
@@ -190,6 +198,16 @@
     padding-top: 3px;
 }
 
+.checkbox__large > input:disabled + label:before {
+    cursor: default;
+    width: 24px;
+    height: 24px;
+}
+
+.checkbox__large > input.invalid + label:before {
+    border: 1px solid red;
+}
+
 .radio-group {
     display: flex;
     justify-content: space-between;
@@ -205,14 +223,17 @@
 }
 
 .radio-container.disabled .radio:after {
+    cursor: default;
     background: #F2F2F5;
 }
 
 .radio-container.disabled .radio {
+    cursor: default;
     border: 1px solid #E3E4EB;
 }
 
 .radio-container.disabled {
+    cursor: default;
     color: #ABACC2;
 }
 
@@ -272,7 +293,7 @@
 }
 
 .login_header {
-    margin-bottom: 48px;
+    margin-bottom: 16px;
     font-weight: 500;
     font-size: 24px;
     line-height: 32px;
@@ -330,10 +351,9 @@
 /* form_group */
 .form_group {
     margin-bottom: 24px;
-}
-.form_group:nth-child(3) {
     position: relative;
 }
+
 .visibility {
     position: absolute;
     width: 20px;
@@ -351,9 +371,11 @@ input.invalid {
     border: 1px solid #F5222D;
 }
 input:disabled {
+    cursor: default;
     color: #E5E5E5;
 }
 .auth-error {
+    height: 32px;
     font-size: 12px;
     line-height: 16px;
     color: red;
@@ -614,12 +636,10 @@ select {
 }
 
 .select-selected.disabled {
+    cursor: default;
     background-image: url("../assets/disabled-down.svg");
     background-repeat: no-repeat;
     background-position: 370px;
-}
-
-.select-selected.disabled {
     border: 1px solid #C7C8D9;
 }
 
@@ -720,10 +740,12 @@ input:checked + .slider {
 }
 
 .switch-block.disabled {
+    cursor: default;
     color: #ABACC2;
 }
 
 .switch input:disabled + .slider{
+    cursor: default;
     background-color: #EBEDF2;
 }
 

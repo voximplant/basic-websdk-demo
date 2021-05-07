@@ -5,19 +5,12 @@ const debugInfoInput = document.getElementById('input-debug');
 const connectivityCheckInput = document.getElementById('input-connectivity');
 const userNameInput = document.getElementById('input-username');
 const passwordInput = document.getElementById('input-password');
+const loginButton = document.getElementById('login-btn');
 
 document.addEventListener('DOMContentLoaded', () => {
-  try {
-    const lastConnectionRaw = JSON.parse(localStorage.getItem('lastConnection'));
-    const lastConnection = lastConnectionRaw.connected || false;
-    if (!lastConnection) {
-      serverIpInput.classList.add('invalid');
-    }
-  } catch (e) {}
-
   const lastDataRaw = localStorage.getItem('lastData');
   if (lastDataRaw) {
-    document.getElementById('login-btn').disabled = false;
+    loginButton.disabled = false;
     try {
       lastDataFromLocalStorage = JSON.parse(lastDataRaw);
       userNameInput.value = lastDataFromLocalStorage.username || '';
@@ -31,12 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
         table.classList.remove('hidden');
 
         lastDataFromLocalStorage.serverIps.forEach((serverIp) => {
-          const tmpl = `
+          const serverListItem = `
             <div class="server-list_item">
                 <span>${serverIp}</span>
                 <button class="btn" onclick="serverIpInput.value = '${serverIp}'">Apply</button>
             </div>`;
-          table.insertAdjacentHTML('beforeend', tmpl);
+          table.insertAdjacentHTML('beforeend', serverListItem);
         });
       }
     } catch (e) {}
@@ -90,10 +83,19 @@ const init = async (username, password) => {
 const connectToVoxCloud = async (username, password, connectivityCheck = false) => {
   try {
     await sdk.connect(connectivityCheck);
-    localStorage.setItem('lastConnection', JSON.stringify({ connected: true }));
   } catch (e) {
-    localStorage.setItem('lastConnection', JSON.stringify({ connected: false }));
-    window.location.reload();
+    // disable inputs if server IP is incorrect or if it's impossible to connect to the server with connectivity check on
+    serverIpInput.classList.add('invalid');
+    connectivityCheckInput.checked && connectivityCheckInput.classList.add('invalid');
+    serverIpInput.disabled = true;
+    userNameInput.disabled = true;
+    passwordInput.disabled = true;
+    debugInfoInput.disabled = true;
+    connectivityCheckInput.disabled = true;
+    loginButton.disabled = true;
+    document.querySelectorAll('.form_group').forEach(input => input.classList.add('disabled'));
+    const errorMessage = connectivityCheckInput.checked ? 'Cannot connect to the server with the chosen parameters. Please reload the page and try again.' : 'Cannot connect to the server. Please reload the page and try again.';
+    document.querySelector('.auth-error').innerText = errorMessage;
     return;
   }
   if (!username) username = userNameInput.value;
@@ -137,9 +139,9 @@ const inputAuthDataProcessing = () => {
   inputsAuth.forEach((input) => {
     input.addEventListener('keyup', () => {
       if (userNameInput.value && passwordInput.value) {
-        document.getElementById('login-btn').disabled = false;
+        loginButton.disabled = false;
       } else {
-        document.getElementById('login-btn').disabled = true;
+        loginButton.disabled = true;
       }
     });
     input.addEventListener('keypress', (e) => {
