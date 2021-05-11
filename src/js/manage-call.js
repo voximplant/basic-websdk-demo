@@ -1,6 +1,7 @@
+// handle incoming call
 const handleIncomingCall = ({ call }) => {
-  cleanData();
   currentCall = call;
+  cleanData();
   setUpCall({ currentCall, isIncoming: true, number: call.number() });
   document.getElementById('incoming-call').classList.remove('hidden');
   document.getElementById('caller-number').innerText = call.number();
@@ -25,7 +26,8 @@ const handleIncomingCall = ({ call }) => {
   };
 };
 
-const createCall = () => {
+// create call or conference
+const createCall = (conferenceCall) => {
   cleanData();
   const numberInput = document.getElementById('input-number');
   const number = numberInput.value.trim();
@@ -34,17 +36,21 @@ const createCall = () => {
     numberInput.onkeypress = () => numberInput.classList.remove('invalid');
     return;
   }
-  currentCall = sdk.call({
+  const callSettings = {
     number,
     video: {
       sendVideo: document.getElementById('input-send_video_call').checked,
       receiveVideo: true
     },
     H264first: document.getElementById('input-h264_call')
-  });
-
+  }
+  if (conferenceCall) {
+    callSettings.simulcast = document.getElementById('input-simulcast').checked;
+    currentCall = sdk.callConference(callSettings);
+  } else {
+    currentCall = sdk.call(callSettings);
+  }
   disableConnectingSettings();
-
   setUpCall({ currentCall, number });
 };
 
@@ -134,6 +140,7 @@ const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
   });
 };
 
+// toggle current call activity
 const holdCall = () => {
   const holdButton = document.getElementById('hold-btn')
   if (currentCall) {
@@ -144,5 +151,18 @@ const holdCall = () => {
       holdButton.innerText = 'Unhold';
       currentCall.setActive(false);
     }
+  }
+};
+
+// create a call to conference as a viewer
+const joinAsViewer = () => {
+  const number = document.getElementById('input-number').value.trim();
+  if (!number) return;
+  cleanData();
+  if (sdk.joinAsViewer) {
+    currentCall = sdk.joinAsViewer(number);
+    setUpCall({ currentCall, number, viewer: true });
+  } else {
+    logger.write("This SDK version doesn't allow to call as viewer");
   }
 };

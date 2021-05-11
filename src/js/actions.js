@@ -34,7 +34,7 @@ const timer = document.querySelector('.timer');
 
 // add listeners to access functionality
 const accessFunctionality = () => {
-  callButton.onclick = oneToOneCallSelect.checked ? createCall : callConference;
+  callButton.onclick = () => createCall(isConference);
   joinAsViewerButton.onclick = joinAsViewer;
   showLocalVideoInput.onchange = showLocalVideo;
   startSendingVideoInput.onchange = sendingVideo;
@@ -68,6 +68,7 @@ const manageConnectingView = () => {
     if (conferenceCallSelect.checked) {
       joinAsViewerButton.classList.remove('hidden');
       simulcastContainer.classList.remove('hidden');
+      isConference = true;
     }
   };
 
@@ -76,6 +77,7 @@ const manageConnectingView = () => {
     if (oneToOneCallSelect.checked) {
       joinAsViewerButton.classList.add('hidden');
       simulcastContainer.classList.add('hidden');
+      isConference = false;
     }
   };
 
@@ -150,7 +152,6 @@ const callStateDisconnected = () => {
   callOrConferenceRadioSelectors.forEach((radio) => radio.classList.remove('disabled'));
   oneToOneCallSelect.disabled = false;
   conferenceCallSelect.disabled = false;
-  isConference = false;
 };
 
 // return UI elements to initial state before call

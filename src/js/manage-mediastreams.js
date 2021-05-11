@@ -1,7 +1,7 @@
 // stop share screen
 const stopShare = () => {
-  document.querySelector('.white-circle').classList.contains('hidden') &&
-    document.querySelector('.white-circle').classList.remove('hidden');
+  const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
+  noVideoSign.classList.remove('hidden');
   if (currentCall !== null) {
     currentCall
       .stopSharingScreen()
@@ -20,7 +20,8 @@ const startShare = () => {
   if (currentCall !== null) {
     const showLocalVideo = document.getElementById('input-show-local-video').checked;
     const replaceVideo = document.getElementById('input-replace-video').checked;
-    showLocalVideo && document.querySelector('.white-circle').classList.add('hidden');
+    const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
+    showLocalVideo && noVideoSign.classList.add('hidden');
     currentCall
       .shareScreen(showLocalVideo, replaceVideo)
       .then((e) => {
@@ -39,10 +40,11 @@ const startShare = () => {
             document.getElementById('start-sharing').disabled = false;
             document.getElementById('input-show-local-video').disabled = false;
             document.getElementById('input-replace-video').disabled = false;
+            noVideoSign.classList.add('hidden');
           });
       })
       .catch((e) => {
-        document.querySelector('.white-circle').classList.remove('hidden');
+        noVideoSign.classList.remove('hidden');
         logger.write(e.message);
       });
   }
