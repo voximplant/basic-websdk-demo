@@ -112,7 +112,7 @@
     color: #ABACC2;
 }
 
-/*checkbox*/
+/* checkbox */
 .checkbox {
     display: inline-block;
     margin-right: 17px;
@@ -381,7 +381,7 @@ input:disabled {
     color: red;
 }
 
-/*server-list*/
+/* server-list */
 .server-list {
     margin: 40px 0;
     width: 100%;
@@ -427,7 +427,7 @@ input:disabled {
     box-shadow: inset 0px 1px 0px #EBEDF2, inset -1px 0px 0px #EBEDF2, inset 1px 0px 0px #EBEDF2, inset 0px -1px 0px #EBEDF2;
 }
 
-/*page_action*/
+/* page_action */
 .page_action{
     box-sizing: border-box;
     padding: 16px;
@@ -487,7 +487,7 @@ input:disabled {
     font-size: 12px;
 }
 
-/*areas*/
+/* areas */
 .action_auth-data { grid-area: auth_data; }
 .action_remote-video { grid-area: remote_video; }
 .action_local-video { grid-area: local_video; }
@@ -495,7 +495,7 @@ input:disabled {
 .action_logger { grid-area: logger; }
 .action_endpoints { grid-area: endpoints; }
 
-/*area specific style*/
+/* area specific style */
 .action_remote-video {
     position: relative;
 }

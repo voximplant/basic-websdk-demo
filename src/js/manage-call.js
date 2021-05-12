@@ -1,4 +1,4 @@
-// handle incoming call
+// handle an incoming call
 const handleIncomingCall = ({ call }) => {
   currentCall = call;
   cleanData();
@@ -26,7 +26,7 @@ const handleIncomingCall = ({ call }) => {
   };
 };
 
-// create call or conference
+// create a call or conference
 const createCall = (conferenceCall) => {
   cleanData();
   const numberInput = document.getElementById('input-number');
@@ -140,7 +140,7 @@ const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
   });
 };
 
-// toggle current call activity
+// toggle the current call activity
 const holdCall = () => {
   const holdButton = document.getElementById('hold-btn')
   if (currentCall) {

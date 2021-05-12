@@ -43,7 +43,7 @@ const accessFunctionality = () => {
   muteInput.onchange = muteAudio;
 };
 
-// disable connecting settings of the caller after call started
+// disable the caller's connection settings after the call started
 const disableConnectingSettings = () => {
   callOrConferenceRadioSelectors.forEach((radio) => radio.classList.add('disabled'));
   inputNumber.disabled = true;
@@ -61,9 +61,9 @@ const disableConnectingSettings = () => {
   }
 };
 
-// manages connecting view functionality
+// manages connection view functionality
 const manageConnectingView = () => {
-  // adds possibility to join as a viewer if call conference selected
+  // adds the possibility to join as a viewer if call conference selected
   conferenceCallSelect.onchange = () => {
     if (conferenceCallSelect.checked) {
       joinAsViewerButton.classList.remove('hidden');
@@ -72,7 +72,7 @@ const manageConnectingView = () => {
     }
   };
 
-  // removes possibility to join as a viewer if call conference selected
+  // removes the possibility to join as a viewer if call conference selected
   oneToOneCallSelect.onchange = () => {
     if (oneToOneCallSelect.checked) {
       joinAsViewerButton.classList.add('hidden');
@@ -81,7 +81,7 @@ const manageConnectingView = () => {
     }
   };
 
-  // adds transfer action view
+  // adds the transfer action view
   transferButton.onclick = () => {
     connectingBoard.classList.add('hidden');
     transferBoard.classList.remove('hidden');
@@ -97,14 +97,14 @@ const manageConnectingView = () => {
     transferBoard.classList.add('hidden');
   };
 
-  // return call action view to connecting state if transfer canceled
+  // return call action view to connecting state if the transfer canceled
   document.getElementById('cancel-transfer-btn').onclick = () => {
     connectingBoard.classList.remove('hidden');
     transferBoard.classList.add('hidden');
   };
 };
 
-// make available UI elements needed to manage call, share video and access to over functionality
+// make UIelements to manage call, share video and access functionality available
 const callStateConnected = () => {
   if (
     sendVideoCheck.checked ||
@@ -131,7 +131,7 @@ const callStateConnected = () => {
   })
 };
 
-// return UI elements to initial state before call
+// return UI elements to the initial state before call
 const callStateDisconnected = () => {
   enableDropdownSelect();
   startSendingVideoInput.checked = false;
@@ -154,7 +154,7 @@ const callStateDisconnected = () => {
   conferenceCallSelect.disabled = false;
 };
 
-// return UI elements to initial state before call
+// return UI elements to the initial state before call
 const transferCallStateDisconnected = () => {
   inputNumberTransfer.disabled = false;
   transferButtonsGroup.classList.remove('hidden');
@@ -163,7 +163,7 @@ const transferCallStateDisconnected = () => {
   transferBoard.classList.add('hidden');
 };
 
-// enable/disable possibility to change sharing settings depending on sharing state
+// enable/disable the possibility to change sharing settings depending on sharing state
 const changeAccessToSharingElements = (access = false) => {
   shareButton.disabled = access;
   showLocalVideoCheck.disabled = access;

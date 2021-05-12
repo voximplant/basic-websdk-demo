@@ -1,4 +1,4 @@
-// get output and input devices to create dropdown list to let user to use additional devices
+// get the output and input devices to create dropdown list to let user to use additional devices
 const setHardwareSettings = async () => {
   const cams = (await getCameras()) || [];
   if (!cams.map(cam => cam.id).includes('default')) {
@@ -73,8 +73,8 @@ const setHardwareSettings = async () => {
   }
 };
 
-// set device to audio/video settings
-// default settings may be set without current call and are used when new call is created. They change together with current call settings during this call
+// set up a device according to audio/video settings
+// default settings may be set without current call and are used when a new call is created. They change with current call settings during this call
 const changeMicrophone = (inputId) => {
   const outputId = VoxImplant.Hardware.AudioDeviceManager.get().getDefaultAudioSettings().outputId;
   const audioParams = { inputId };

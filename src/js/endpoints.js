@@ -1,13 +1,14 @@
-// an object stores endpoints as keys and arrays with media kinds of each endpoint as values to track
+// the object stores endpoints as keys and arrays with media kinds of each endpoint as values to track
 // if there are current video streams to render in remote video container or black window should be rendering
 // to show that there is a participant in conference without video stream
+
 const endpointsMedia = {};
 
 // handles endpoint added
 const onEndpointAdded = ({ endpoint }) => {
   endpointsMedia[endpoint.id] = [];
 
-  // create an element representing a table row
+  // create an element that represents a table row
   const endpointTableRow = `<tr class="endpoint-row ${endpoint.id}">
               <td rowspan="1" class="endpoint-cell ${endpoint.id}-id">${endpoint.id}</td>
               <td class="endpoint-cell ${endpoint.id}-video"></td>
@@ -23,27 +24,27 @@ const onEndpointAdded = ({ endpoint }) => {
 
 // handle remote media stream added
 const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
-  // replacing sharing with video as both of them will be shown as video streams in table with endpoints
+  // replacing screen share with video so both of them are shown as video streams in the endpoint table
   const mediaRendererKind = mediaRenderer.kind.replace('sharing', 'video');
 
-  // endpoint of user in conference has a flag isDefault which is true and it should not be rendering in remote video holder
+  // user endpoint in a conference who has a flag isDefault, which is true, should not be rendering in remote video holder
   if (!endpoint.isDefault || !isConference) {
     document.getElementById('remote_video_holder').classList.remove('empty');
 
-    // render media in container
+    // render media in the container
     endpointsMedia[endpoint.id].push(mediaRendererKind);
 
-    // add black window if we have only audio stream on this endpoint
+    // add a black window if we have only audio stream on this endpoint
     if (mediaRendererKind === 'audio' && !endpointsMedia[endpoint.id].includes('video')) {
       addNoVideoContainer(endpoint.id);
     }
 
-    // remove black window if a video stream is added
+    // remove the black window if a video stream is added
     if (mediaRendererKind === 'video' && document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null) {
       document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
     }
 
-    // render video stream in remote video holder
+    // render a video stream in the remote video holder
     const videoHolder = document.querySelector('.remote-video-holder');
     mediaRenderer.render(videoHolder);
   }
@@ -61,7 +62,7 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
   })
   mediaRenderer.placed = true;
 
-  // add media id in table with endpoints
+  // add a media id in the endpoint table
   let endpointCell = document.querySelector(
     `.${CSS.escape(`${endpoint.id}-${mediaRendererKind}`)}`
   );
@@ -89,9 +90,9 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
   endpointCell.classList.remove(`${endpoint.id}-${mediaRendererKind}`);
 };
 
-// handle remote media removed
+// handle the remote media removed
 const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
-  // if this is not user's endpoint, check if there is no more video streams and show black window in this case
+  // if this is not user's endpoint, check if there is no more video streams and show black window
   if (!endpoint.isDefault || !isConference) {
     const indexMedia = endpointsMedia[endpoint.id].indexOf(mediaRenderer.kind);
     endpointsMedia[endpoint.id].splice(indexMedia, 1);
@@ -102,19 +103,18 @@ const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
       document.getElementById('remote_video_holder').classList.add('empty');
     }
   };
-
-  // make inactive a cell with removed media stream
+  // make a cell with removed media stream inactive
   const removedMedia = document.querySelector(`.${CSS.escape(mediaRenderer.id)}`);
   removedMedia && removedMedia.classList.add('inactive');
 };
 
 // handle an endpoint removed
 const onEndpointRemoved = ({ endpoint }) => {
-  // show empty remote video container
+  // show an empty remote video container
   document.getElementById('remote_video_holder').classList.add('empty');
-  // remove black window
+  // remove the black window
   document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null && document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
-  // make inactive a cell with endpoint id
+  // make the endpoint id cell inactive
   document.querySelector(`.${CSS.escape(endpoint.id)}-id`).classList.add('inactive');
 };
 

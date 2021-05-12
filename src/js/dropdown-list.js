@@ -1,4 +1,4 @@
-// add item to dropdown list of available hardware devices
+// add an item to the available hardware devices dropdown list
 const addToDropdown = (device, selectElement, selected, items) => {
   const option = document.createElement('option');
   option.value = device.id;
@@ -12,7 +12,7 @@ const addToDropdown = (device, selectElement, selected, items) => {
   } else {
     items.appendChild(divOption);
   }
-  // place an device item into a selected field, close dropdown and trigger an native select element event to change hardware settings
+  // place a device item into the selected field, close dropdown and trigger a native select element event to change hardware settings
   divOption.onclick = () => {
     items.classList.add('hidden');
     selected.classList.remove('opened');
@@ -22,13 +22,13 @@ const addToDropdown = (device, selectElement, selected, items) => {
   }
 }
 
-// hide/show a list of devices
+// hide/show the list of devices
 const toggleDropdown = (e) => {
   e.target.nextElementSibling.classList.toggle('hidden');
   e.target.classList.toggle('opened');
 }
 
-// disable selecting another device
+// disable another device selection
 const disableDropdownSelect = () => {
   for (const element of document.getElementsByClassName('select-selected')) {
     element.classList.add('disabled');
@@ -36,7 +36,7 @@ const disableDropdownSelect = () => {
   }
 }
 
-// enable selecting another device
+// enable another device selection
 const enableDropdownSelect = () => {
   for (const element of document.getElementsByClassName('select-selected')) {
     element.classList.remove('disabled');

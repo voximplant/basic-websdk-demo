@@ -1,4 +1,4 @@
-// stop share screen
+// stop screen sharing
 const stopShare = () => {
   const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
   noVideoSign.classList.remove('hidden');
@@ -15,7 +15,7 @@ const stopShare = () => {
   }
 };
 
-// start share screen, with options: replacing current video, showing shared screen in local video, depending on user settings selected
+// start screen sharing with options: replace current video, show shared screen in local video, depending on user settings selected
 const startShare = () => {
   if (currentCall !== null) {
     const showLocalVideo = document.getElementById('input-show-local-video').checked;
@@ -50,7 +50,7 @@ const startShare = () => {
   }
 };
 
-// render local video
+// render the local video
 const showLocalVideo = () => {
   const isShow = document.getElementById('show-local-video-switch').checked;
   const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
@@ -67,7 +67,8 @@ const showLocalVideo = () => {
   }
 };
 
-// start showing video if it was not started when call was initialized, or stop it if it is now showing
+// Start/stop sending video to a call. In case of a remote participant uses a Web SDK client, 
+// he/she will receive either the EndpointEvents.RemoteMediaAdded or EndpointEvents.RemoteMediaRemoved event accordingly.
 const sendingVideo = () => {
   const isSendingVideo = document.getElementById('start-sending-video').checked;
   if (currentCall) {

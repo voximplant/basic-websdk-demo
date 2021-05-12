@@ -8,7 +8,7 @@ function simpleStringify (object) {
   return JSON.stringify(simpleObject);
 }
 
-// Logging into a textarea
+// Logging into a text area
 const Logger = function (element) {
   const logRecords = [];
   const textArea = element;

@@ -1,16 +1,16 @@
-let currentCall; // call object (instance of class Call) with methods
-let isConference; // stores info if call is conference, is used when managing endpoints remoteMedia (./js/endpoints.js)
-let transferCall; // call object storing instance of transfer call
-const logger = new Logger(document.getElementById('logarea')); // create instance of Logger with method write
+let currentCall; // call object (instance of the Call class) with methods
+let isConference; // stores info if the all is a conference, used to manage remoteMedia endpoints (./js/endpoints.js)
+let transferCall; // call object which stores the instance of transfer call
+const logger = new Logger(document.getElementById('logarea')); // creates a Logger instance with write method
 
 const sdk = VoxImplant.getInstance();
 
 // login
 document.getElementById('login-btn').onclick = async () => {
   await login(); // initialize, connect, login to Voximplant Cloud (./js/login.js)
-  await setHardwareSettings(); // get available cameras, microphones and output devices and create dropdown for selecting (./js/hardware-settings.js)
+  await setHardwareSettings(); // get available cameras, microphones and output devices and create a dropdown for selection (./js/hardware-settings.js)
   accessFunctionality(); // add event listeners to interactive elements ('./js/actions.js')
-  manageConnectingView(); // changes connecting window interactive elements depending on chosen option (./js/action.js)
+  manageConnectingView(); // changes connection window interactive elements, depending on chosen option (./js/action.js)
 };
 
 // handle incoming call

@@ -52,7 +52,7 @@ const login = async () => {
   lastData.serverIps = serverIps;
   lastData.isDebugInfo = debugInfoInput.checked;
   lastData.connectivityCheck = connectivityCheckInput.checked;
-  // reconnect to Voximplant Cloud if connection was closed because of network problems
+  // reconnect to Voximplant Cloud if connection was closed because of network issues
   sdk.on(VoxImplant.Events.ConnectionClosed, () => {
     connectToVoxCloud(username, password, connectivityCheckInput.checked);
   });
@@ -71,9 +71,9 @@ const login = async () => {
 const init = async (username, password) => {
   try {
     await sdk.init({
-      localVideoContainerId: 'local_video_holder', // Id of HTMLElement that will be used as a default container for local video elements
-      serverIp: serverIpInput.value, // IP address of particular media gateway for connection, if it's not specified IP address will be chosen automatically
-      showDebugInfo: debugInfoInput.checked // Show debug info in console
+      localVideoContainerId: 'local_video_holder', // Id of HTMLElement that is used as a default container for local video elements
+      serverIp: serverIpInput.value, // IP address of a particular media gateway for connection. If it's not specified, IP address will be chosen automatically
+      showDebugInfo: debugInfoInput.checked // Show debug info in the console
     });
   } catch (e) {
   }
@@ -85,7 +85,7 @@ const connectToVoxCloud = async (username, password, connectivityCheck = false) 
     await sdk.connect(connectivityCheck);
     localStorage.setItem('lastConnection', JSON.stringify({ connected: true }));
   } catch (e) {
-    // disable inputs if server IP is incorrect or if it's impossible to connect to the server with connectivity check on
+    // disable inputs if the server IP is incorrect or if it's impossible to connect to the server with connectivity check on
     serverIpInput.classList.add('invalid');
     connectivityCheckInput.checked && connectivityCheckInput.classList.add('invalid');
     serverIpInput.disabled = true;

@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="style/style.css" />
   </head>
   <body>
-<!--  Login page -->
+    <!--  Login page -->
     <div class="page page_login hidden">
       <div class="login">
         <div class="login_header">
@@ -68,11 +68,11 @@
         <div class="server-list hidden"></div>
       </div>
     </div>
-<!--End of login page-->
+    <!-- End of login page -->
 
-<!--Action page-->
+    <!-- Action page -->
     <div class="page page_action hidden">
-<!--      Incoming call window-->
+      <!-- Incoming call window -->
       <div class="incoming-call hidden" id="incoming-call">
         <div class="incoming-call-window">
         <h2>Incomming Call...</h2>
@@ -94,13 +94,13 @@
         </div>
         </div>
       </div>
-<!--      End of incoming call window-->
-<!--      Info about looged in user -->
+      <!-- End of incoming call window -->
+      <!-- Info about the looged user -->
       <div class="action_auth-data">
         <h2></h2>
       </div>
-<!--      End of info about logged in user -->
-<!--      Remote video -->
+      <!-- End of the info about the logged user -->
+      <!-- Remote video -->
       <div class="action_remote-video">
         <h3>Incoming video</h3>
         <div class="remote-video-holder empty" id="remote_video_holder">
@@ -108,16 +108,14 @@
         <div class="timer">00:00:00
         </div>
       </div>
-<!--      End of remote video -->
-
-<!--      Local video-->
+      <!-- End of remote video -->
+      <!-- Local video -->
       <div class="action_local-video">
         <h3>Local Video</h3>
         <div class="local-video-holder" id="local_video_holder">
         <div class="white-circle"></div>
         </div>
-
-<!--        Media settings -->
+        <!-- Media settings -->
         <div class="action_media-selector">
           <div class="media-selector_block-camera">
             <label for="change-camera">Camera</label>
@@ -153,17 +151,14 @@
             </div>
           </div>
         </div>
-<!--        End of media settings -->
+        <!-- End of media settings -->
       </div>
-<!--      End of local video-->
-
+      <!-- End of local video -->
       <div class="action_bordered_holder">
-
-<!--        Connection section -->
+      <!-- Connection section -->
         <div class="action_connecting action_bordered">
           <h2>Connecting</h2>
-
-<!--     Type of call select     -->
+          <!-- Call type selection -->
           <div class="radio-group">
             <label class="radio-container"
               >One-To-One Call
@@ -176,18 +171,16 @@
               <span class="radio"></span>
             </label>
           </div>
-<!--          End of type of call select -->
-
-<!--          Input number -->
+          <!-- End of call type selection -->
+          <!-- Number input -->
           <div class="input_group">
             <label for="input-number" class="input_label"
               >Number</label
             >
             <input type="text" id="input-number" class="input" />
           </div>
-<!--          End of input number -->
-
-<!--          Call settings checkbox group -->
+          <!-- End of number input -->
+          <!-- Call settings checkbox group -->
           <div class="checkbox_group">
             <div class="checkbox">
               <input type="checkbox" id="input-send_video_call" />
@@ -202,9 +195,8 @@
               <label for="input-simulcast">Simulcast</label>
             </div>
           </div>
-<!--          End of call settings checkbox group -->
-
-<!--          Call manage button group -->
+          <!-- End of call settings checkbox group -->
+          <!-- Call manage button group -->
           <div class="btn_group" id="call-btn-group">
             <button class="btn btn__primary" id="call-btn">Call</button>
             <button class="btn hidden" id="viewer-button">Join as viewer</button>
@@ -215,10 +207,9 @@
           </div>
           <div tabindex="0" class="btn__transfer hidden" id="transfer">Transfer</div>
         </div>
-<!--        End of call manage button group -->
-        <!--        End of connection section-->
-
-<!--        Transfer call section-->
+        <!-- End of call manage button group -->
+        <!-- End of connection section -->
+        <!-- Transfer call section -->
         <div class="action_transfer action_bordered hidden">
           <h2>Transfer</h2>
           <div class="input_group">
@@ -237,7 +228,7 @@
               <label for="input-h264_call-transfer">H264</label>
             </div>
           </div>
-<!--          Transfer call manage button group -->
+          <!-- Transfer call manage button group -->
           <div class="btn_group" id="transfer-btn-group">
             <button class="btn btn__primary" id="call-btn-transfer">Call</button>
             <button class="btn" id="back-to-call-btn">Back</button>
@@ -246,11 +237,10 @@
             <button class="btn btn__primary" id="confirm-transfer-btn">Confirm</button>
             <button class="btn" id="cancel-transfer-btn">Cancel</button>
           </div>
-<!--          End of transfer call manage button group-->
+          <!-- End of transfer call manage button group -->
         </div>
-        <!--        End of transfer call section-->
-
-        <!--        Sharing section-->
+        <!-- End of transfer call section -->
+        <!-- Sharing section -->
         <div class="action_sharing action_bordered">
           <h2>Sharing</h2>
           <div class="access_alarm">
@@ -271,9 +261,8 @@
             <button class="btn" id="stop-sharing" disabled>Stop sharing</button>
           </div>
         </div>
-<!--        End of sharing settings-->
-
-<!--        Options section -->
+        <!-- End of sharing settings -->
+        <!-- Options section -->
         <div class="action_options action_bordered">
           <h2>Optional</h2>
           <div class="access_alarm">
@@ -301,8 +290,8 @@
           </div>
         </div>
       </div>
-      <!--        End of option section-->
-      <!--        Logger section -->
+      <!-- End of options section -->
+      <!-- Logger section -->
       <div class="action_logger">
         <h2>Data</h2>
         <h3>Logger</h3>
@@ -310,7 +299,7 @@
           <textarea id="logarea"></textarea>
         </div>
       </div>
-<!--      Endpoints table section -->
+      <!-- Endpoints table section -->
       <div class="action_endpoints">
         <table class="table">
           <tr>
@@ -322,9 +311,9 @@
           </tbody>
         </table>
       </div>
-<!--      End of endpoints section-->
+      <!-- End of endpoints table section -->
     </div>
-<!--End of action page -->
+    <!-- End of action page -->
     <script src="https://unpkg.com/voximplant-websdk"></script>
     <script src="js/timer.js"></script>
     <script src="js/utils.js"></script>

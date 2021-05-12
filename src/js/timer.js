@@ -1,5 +1,5 @@
 let interval;
-// start counting duration of session
+// start counting the session duration
 const startTimer = () => {
   let time = 0;
   const second = 1;
@@ -13,7 +13,7 @@ const startTimer = () => {
   }, 1000)
 }
 
-// stop counting duration of session
+// stop counting the session duration
 const stopTimer = () => {
   clearInterval(interval);
 }
