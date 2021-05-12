@@ -45,7 +45,7 @@ const login = async () => {
       ? lastDataFromLocalStorage.serverIps
       : [];
   const username = userNameInput.value;
-  const password = passwordInput.value
+  const password = passwordInput.value;
   lastData.username = username;
   lastData.password = password;
   lastData.serverIp = serverIpInput.value;
@@ -63,7 +63,9 @@ const login = async () => {
   }
 
   if (sdk.getClientState() === VoxImplant.ClientState.LOGGED_IN) {
-    lastData.serverIps = Array.from(new Set([...serverIps, lastData.serverIp])).filter(server => server.length);
+    lastData.serverIps = Array.from(new Set([...serverIps, lastData.serverIp])).filter(
+      (server) => server.length
+    );
   }
   localStorage.setItem('lastData', JSON.stringify(lastData));
 };
@@ -75,8 +77,7 @@ const init = async (username, password) => {
       serverIp: serverIpInput.value, // IP address of a particular media gateway for connection. If it's not specified, IP address will be chosen automatically
       showDebugInfo: debugInfoInput.checked // Show debug info in the console
     });
-  } catch (e) {
-  }
+  } catch (e) {}
   await connectToVoxCloud(username, password, connectivityCheckInput.checked);
 };
 
@@ -94,8 +95,10 @@ const connectToVoxCloud = async (username, password, connectivityCheck = false) 
     debugInfoInput.disabled = true;
     connectivityCheckInput.disabled = true;
     loginButton.disabled = true;
-    document.querySelectorAll('.form_group').forEach(input => input.classList.add('disabled'));
-    const errorMessage = connectivityCheckInput.checked ? 'Cannot connect to the server with the chosen parameters. Please reload the page and try again.' : 'Cannot connect to the server. Please reload the page and try again.';
+    document.querySelectorAll('.form_group').forEach((input) => input.classList.add('disabled'));
+    const errorMessage = connectivityCheckInput.checked
+      ? 'Cannot connect to the server with the chosen parameters. Please reload the page and try again.'
+      : 'Cannot connect to the server. Please reload the page and try again.';
     document.querySelector('.auth-error').innerText = errorMessage;
     return;
   }
@@ -115,11 +118,11 @@ const signIn = async (username, password) => {
     document.querySelector('.page_login').classList.add('hidden');
     document.querySelector('.page_action').classList.remove('hidden');
 
-    document.querySelector('.action_auth-data').innerHTML = `<h2>Logged in as ${username}</h2>`;
+    const authData = document.querySelector('.action_auth-data');
+    authData.querySelector('h2').innerText = `Logged in as ${username}`;
+    authData.querySelector('h3').innerText = `You're using Web SDK version ${sdk.version}`;
     if (serverIpInput.value.length) {
-      document.querySelector(
-        '.action_auth-data'
-      ).innerHTML = `<h2>Logged in as ${username} at ${serverIpInput.value}</h2>`;
+      authData.querySelector('h2').innerText = `Logged in as ${username} at ${serverIpInput.value}`;
     }
   } catch (e) {
     userNameInput.classList.add('invalid');
