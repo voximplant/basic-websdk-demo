@@ -29,8 +29,6 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
 
   // user endpoint in a conference who has a flag isDefault, which is true, should not be rendering in remote video holder
   if (!endpoint.isDefault || !isConference) {
-    document.getElementById('remote_video_holder').classList.remove('empty');
-
     // render media in the container
     endpointsMedia[endpoint.id].push(mediaRendererKind);
 
@@ -40,7 +38,10 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
     }
 
     // remove the black window if a video stream is added
-    if (mediaRendererKind === 'video' && document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null) {
+    if (
+      mediaRendererKind === 'video' &&
+      document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null
+    ) {
       document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
     }
 
@@ -52,15 +53,33 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
   mediaRenderer.element.addEventListener('click', (event) => {
     if (event.ctrlKey || event.altKey) {
       if (event.shiftKey) {
-        mediaRenderer.requestVideoSize(1920, 1080)
+        // Requests the specified video size for the video stream
+        // The stream resolution may be changed to the closest to the specified width and height
+        mediaRenderer.requestVideoSize(1920, 1080);
       } else {
-        if (mediaRenderer.videoSize && mediaRenderer.videoSize.width && mediaRenderer.videoSize.height) { mediaRenderer.requestVideoSize(mediaRenderer.videoSize.width / 2, mediaRenderer.videoSize.height / 2) } else { mediaRenderer.requestVideoSize(1920, 1080) }
+        if (
+          mediaRenderer.videoSize &&
+          mediaRenderer.videoSize.width &&
+          mediaRenderer.videoSize.height
+        ) {
+          // request to the server to reduce the size of the received video stream size, which will cause simulcast layer to switch to the closest to the specified values
+          mediaRenderer.requestVideoSize(
+            mediaRenderer.videoSize.width / 2,
+            mediaRenderer.videoSize.height / 2
+          );
+        } else {
+          mediaRenderer.requestVideoSize(1920, 1080);
+        }
       }
     } else {
-      if (mediaRenderer.enabled) { mediaRenderer.disable(); } else { mediaRenderer.enable(); }
+      if (mediaRenderer.enabled) {
+        // enable/disable video stream reception from remote participants
+        mediaRenderer.disable();
+      } else {
+        mediaRenderer.enable();
+      }
     }
-  })
-  mediaRenderer.placed = true;
+  });
 
   // add a media id in the endpoint table
   let endpointCell = document.querySelector(
@@ -96,13 +115,13 @@ const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
   if (!endpoint.isDefault || !isConference) {
     const indexMedia = endpointsMedia[endpoint.id].indexOf(mediaRenderer.kind);
     endpointsMedia[endpoint.id].splice(indexMedia, 1);
-    if (endpointsMedia[endpoint.id].length && endpointsMedia[endpoint.id].every(media => media === 'audio')) {
+    if (
+      endpointsMedia[endpoint.id].length &&
+      endpointsMedia[endpoint.id].every((media) => media === 'audio')
+    ) {
       addNoVideoContainer(endpoint.id);
     }
-    if (!endpointsMedia[endpoint.id].length) {
-      document.getElementById('remote_video_holder').classList.add('empty');
-    }
-  };
+  }
   // make a cell with removed media stream inactive
   const removedMedia = document.querySelector(`.${CSS.escape(mediaRenderer.id)}`);
   removedMedia && removedMedia.classList.add('inactive');
@@ -113,7 +132,8 @@ const onEndpointRemoved = ({ endpoint }) => {
   // show an empty remote video container
   document.getElementById('remote_video_holder').classList.add('empty');
   // remove the black window
-  document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null && document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
+  document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null &&
+    document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
   // make the endpoint id cell inactive
   document.querySelector(`.${CSS.escape(endpoint.id)}-id`).classList.add('inactive');
 };

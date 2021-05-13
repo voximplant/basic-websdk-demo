@@ -1,7 +1,13 @@
+const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
+const showLocalVideoSharing = document.getElementById('input-show-local-video');
+const showLocalVideoOptional = document.getElementById('show-local-video-switch');
+const replaceVideo = document.getElementById('input-replace-video');
+
 // stop screen sharing
 const stopShare = () => {
-  const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
-  noVideoSign.classList.remove('hidden');
+  !showLocalVideoOptional.checked &&
+    showLocalVideoSharing.checked &&
+    noVideoSign.classList.remove('hidden');
   if (currentCall !== null) {
     currentCall
       .stopSharingScreen()
@@ -18,12 +24,9 @@ const stopShare = () => {
 // start screen sharing with options: replace current video, show shared screen in local video, depending on user settings selected
 const startShare = () => {
   if (currentCall !== null) {
-    const showLocalVideo = document.getElementById('input-show-local-video').checked;
-    const replaceVideo = document.getElementById('input-replace-video').checked;
-    const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
-    showLocalVideo && noVideoSign.classList.add('hidden');
+    showLocalVideoSharing.checked && noVideoSign.classList.add('hidden');
     currentCall
-      .shareScreen(showLocalVideo, replaceVideo)
+      .shareScreen(showLocalVideoSharing.checked, replaceVideo.checked)
       .then((e) => {
         logger.write('Sharing attached');
         changeAccessToSharingElements(true);
@@ -53,7 +56,6 @@ const startShare = () => {
 // render the local video
 const showLocalVideo = () => {
   const isShow = document.getElementById('show-local-video-switch').checked;
-  const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
   try {
     if (isShow) {
       sdk.showLocalVideo(true);
@@ -67,18 +69,23 @@ const showLocalVideo = () => {
   }
 };
 
-// Start/stop sending video to a call. In case of a remote participant uses a Web SDK client, 
+// Start/stop sending video to a call. In case of a remote participant uses a Web SDK client,
 // he/she will receive either the EndpointEvents.RemoteMediaAdded or EndpointEvents.RemoteMediaRemoved event accordingly.
 const sendingVideo = () => {
-  const isSendingVideo = document.getElementById('start-sending-video').checked;
+  const startSendingVideo = document.getElementById('start-sending-video').checked;
+
+  // if video sending is switched off, screen sharing also stops, so starting a new screen share should be available
+  if (!startSendingVideo) {
+    changeAccessToSharingElements();
+  }
   if (currentCall) {
     currentCall
-      .sendVideo(isSendingVideo)
+      .sendVideo(startSendingVideo)
       .then(() => {
-        logger.write(`Resolved sendVideo(${isSendingVideo})`);
+        logger.write(`Resolved sendVideo(${startSendingVideo})`);
       })
       .catch((e) => {
-        logger.write(`ERROR Reject sendVideo(${isSendingVideo})`);
+        logger.write(`ERROR Reject sendVideo(${startSendingVideo})`);
       });
   }
 };
