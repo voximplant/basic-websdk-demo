@@ -8,36 +8,63 @@ const passwordInput = document.getElementById('input-password');
 const loginButton = document.getElementById('login-btn');
 
 document.addEventListener('DOMContentLoaded', () => {
-  const lastDataRaw = localStorage.getItem('lastData');
-  if (lastDataRaw) {
+  // get authorisation parameters from url to login in sdk skipping form filling
+  // получаем параметры авторизации из url чтобы не заполнять форму вручную
+  const urlHashParams = location.hash;
+  const parsedParams = urlHashParams
+    .substr(1)
+    .split('&')
+    .reduce((object, keyValue) => {
+      const [key, value] = keyValue.split('=');
+      object[key] = value;
+      return object;
+    }, {});
+  if (urlHashParams) {
     loginButton.disabled = false;
-    try {
-      lastDataFromLocalStorage = JSON.parse(lastDataRaw);
-      userNameInput.value = lastDataFromLocalStorage.username || '';
-      passwordInput.value = lastDataFromLocalStorage.password || '';
-      serverIpInput.value = lastDataFromLocalStorage.serverIp || '';
-      debugInfoInput.checked = lastDataFromLocalStorage.isDebugInfo || false;
-      connectivityCheckInput.checked = lastDataFromLocalStorage.connectivityCheck || false;
+    authDataFill(parsedParams);
+    loginButton.click();
+  } else {
+    // get authorisation parameters storing in localStorage from last login to fill form automatically
+    // получаем авторизационные параметры из localStorage от последнего входа чтобы не заполнять форму вручную
+    const lastDataRaw = localStorage.getItem('lastData');
+    if (lastDataRaw) {
+      loginButton.disabled = false;
+      try {
+        lastDataFromLocalStorage = JSON.parse(lastDataRaw);
+        authDataFill(lastDataFromLocalStorage);
+      } catch (e) {}
+    }
+  }
+  document.querySelector('.page_login').classList.remove('hidden');
+  inputAuthDataProcessing();
+});
 
-      const table = document.querySelector('.server-list');
-      if (lastDataFromLocalStorage.serverIps && lastDataFromLocalStorage.serverIps.length) {
-        table.classList.remove('hidden');
-
-        lastDataFromLocalStorage.serverIps.forEach((serverIp) => {
-          const serverListItem = `
+const authDataFill = ({
+  username,
+  password,
+  serverIp,
+  serverIps,
+  isDebugInfo,
+  connectivityCheck
+}) => {
+  userNameInput.value = username || '';
+  passwordInput.value = password || '';
+  serverIpInput.value = serverIp || '';
+  debugInfoInput.checked = isDebugInfo || false;
+  connectivityCheckInput.checked = connectivityCheck || false;
+  const table = document.querySelector('.server-list');
+  if (serverIps && serverIps.length) {
+    table.classList.remove('hidden');
+    serverIps.forEach((serverIp) => {
+      const serverListItem = `
             <div class="server-list_item">
                 <span>${serverIp}</span>
                 <button class="btn" onclick="serverIpInput.value = '${serverIp}'">Apply</button>
             </div>`;
-          table.insertAdjacentHTML('beforeend', serverListItem);
-        });
-      }
-    } catch (e) {}
+      table.insertAdjacentHTML('beforeend', serverListItem);
+    });
   }
-
-  document.querySelector('.page_login').classList.remove('hidden');
-  inputAuthDataProcessing();
-});
+};
 
 const login = async () => {
   const serverIps =
