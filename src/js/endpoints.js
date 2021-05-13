@@ -28,7 +28,7 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
   const mediaRendererKind = mediaRenderer.kind.replace('sharing', 'video');
 
   // user endpoint in a conference who has a flag isDefault, which is true, should not be rendering in remote video holder
-  if (!endpoint.isDefault || !isConference) {
+  if (!endpoint.isDefault || !currentCall.settings.isConference) {
     // render media in the container
     endpointsMedia[endpoint.id].push(mediaRendererKind);
 
@@ -73,8 +73,7 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
       }
     } else {
       if (mediaRenderer.enabled) {
-        // enable/disable video stream reception from remote participants
-        mediaRenderer.disable();
+       // enable/disable video stream reception from remote participants mediaRenderer.disable();
       } else {
         mediaRenderer.enable();
       }
@@ -112,7 +111,7 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
 // handle the remote media removed
 const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
   // if this is not user's endpoint, check if there is no more video streams and show black window
-  if (!endpoint.isDefault || !isConference) {
+  if (!endpoint.isDefault || !currentCall.settings.isConference) {
     const indexMedia = endpointsMedia[endpoint.id].indexOf(mediaRenderer.kind);
     endpointsMedia[endpoint.id].splice(indexMedia, 1);
     if (

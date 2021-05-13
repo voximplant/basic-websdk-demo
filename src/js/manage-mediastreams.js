@@ -32,18 +32,24 @@ const startShare = () => {
         changeAccessToSharingElements(true);
         document.getElementById('stop-sharing').onclick = stopShare;
 
+        // screen sharing can be closed not only with an interface  button but also via native browser component
+        // the code below is to track if user closes screen sharing via native browser component
+
+        // get transceivers of current peer connection
         const transceivers = currentCall.peerConnection.getTransceivers();
+
+        // find the transceiver with the sharing stream track
         const transceiverSharing = transceivers.find((transceiver) => {
           return (
             transceiver.sender.track !== null && transceiver.sender.track.label.includes('screen')
           );
         });
+
+        // add a listener to the transceiver's track "ended" event in order to enable sharing button to start a new screen share
         transceiverSharing &&
           transceiverSharing.sender.track.addEventListener('ended', () => {
-            document.getElementById('start-sharing').disabled = false;
-            document.getElementById('input-show-local-video').disabled = false;
-            document.getElementById('input-replace-video').disabled = false;
-            noVideoSign.classList.add('hidden');
+            changeAccessToSharingElements();
+            noVideoSign.classList.remove('hidden');
           });
       })
       .catch((e) => {

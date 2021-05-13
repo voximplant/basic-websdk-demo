@@ -27,7 +27,7 @@ const handleIncomingCall = ({ call }) => {
 };
 
 // create a call or conference
-const createCall = (conferenceCall) => {
+const createCall = () => {
   cleanData();
   const numberInput = document.getElementById('input-number');
   const number = numberInput.value.trim();
@@ -43,8 +43,8 @@ const createCall = (conferenceCall) => {
       receiveVideo: true
     },
     H264first: document.getElementById('input-h264_call')
-  }
-  if (conferenceCall) {
+  };
+  if (document.getElementById('conf-call-btn').checked) {
     callSettings.simulcast = document.getElementById('input-simulcast').checked;
     currentCall = sdk.callConference(callSettings);
   } else {
@@ -79,8 +79,8 @@ const createTransferCall = () => {
     transferCall.setActive(true);
     document.getElementById('confirm-transfer-btn').addEventListener('click', () => {
       sdk.transferCall(currentCall, transferCall);
-      document.querySelector('.action_connecting').classList.add('hidden');
-      document.querySelector('.action_transfer').classList.remove('hidden');
+      document.querySelector('.action_connecting').classList.remove('hidden');
+      document.querySelector('.action_transfer').classList.add('hidden');
       callStateDisconnected();
     });
   });
@@ -95,12 +95,12 @@ const createTransferCall = () => {
 };
 
 const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
-  let prefix = isConference ? 'Call conference to' : 'Call to';
+  let prefix = currentCall.settings.isConference ? 'Call conference to' : 'Call to';
   if (isIncoming) prefix = 'Incoming call from';
   logger.write(`${prefix} ${number}...`);
   document.getElementById('end-call').onclick = () => {
     currentCall.hangup();
-  }
+  };
   currentCall.addEventListener(VoxImplant.CallEvents.EndpointAdded, onEndpointAdded);
 
   currentCall.addEventListener(VoxImplant.CallEvents.Updated, (e) => {
@@ -123,15 +123,11 @@ const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
   currentCall.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
     stopTimer();
     logger.write(`${prefix} ${number} was disconnected`);
-    document.getElementById('decline-btn-group').classList.add('hidden');
-    document.getElementById('call-btn-group').classList.remove('hidden');
     callStateDisconnected();
   });
 
   currentCall.addEventListener(VoxImplant.CallEvents.Failed, (e) => {
-    logger.write(`${prefix} conference failed: ${e.reason} (${e.code})`);
-    document.getElementById('decline-btn-group').classList.add('hidden');
-    document.getElementById('call-btn-group').classList.remove('hidden');
+    logger.write(`${prefix} ${number} failed: ${e.reason} (${e.code})`);
     callStateDisconnected();
   });
 
@@ -142,7 +138,7 @@ const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
 
 // toggle the current call activity
 const holdCall = () => {
-  const holdButton = document.getElementById('hold-btn')
+  const holdButton = document.getElementById('hold-btn');
   if (currentCall) {
     if (holdButton.innerText === 'Unhold') {
       holdButton.innerText = 'Hold';

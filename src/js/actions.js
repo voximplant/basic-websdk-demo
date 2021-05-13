@@ -31,10 +31,12 @@ const transferButtonsGroup = document.getElementById('transfer-btn-group');
 const transferConfirmButtonGroup = document.getElementById('transfer-confirm-btn-group');
 const endpointsTable = document.getElementById('endpoints-table');
 const timer = document.querySelector('.timer');
+const remoteVideoHolder = document.querySelector('.remote-video-holder');
+const checkboxGroups = document.querySelectorAll('.checkbox_group');
 
 // add listeners to access functionality
 const accessFunctionality = () => {
-  callButton.onclick = () => createCall(isConference);
+  callButton.onclick = createCall;
   joinAsViewerButton.onclick = joinAsViewer;
   showLocalVideoInput.onchange = showLocalVideo;
   startSendingVideoInput.onchange = sendingVideo;
@@ -68,7 +70,6 @@ const manageConnectingView = () => {
     if (conferenceCallSelect.checked) {
       joinAsViewerButton.classList.remove('hidden');
       simulcastContainer.classList.remove('hidden');
-      isConference = true;
     }
   };
 
@@ -77,7 +78,6 @@ const manageConnectingView = () => {
     if (oneToOneCallSelect.checked) {
       joinAsViewerButton.classList.add('hidden');
       simulcastContainer.classList.add('hidden');
-      isConference = false;
     }
   };
 
@@ -106,10 +106,7 @@ const manageConnectingView = () => {
 
 // make UIelements to manage call, share video and access functionality available
 const callStateConnected = () => {
-  if (
-    sendVideoCheck.checked ||
-    sendVideoIncomingCall.checked
-  ) {
+  if (sendVideoCheck.checked || sendVideoIncomingCall.checked) {
     startSendingVideoInput.checked = true;
   }
   showLocalVideoCheck.disabled = false;
@@ -121,30 +118,58 @@ const callStateConnected = () => {
   startSendingVideoSwitchGroup.classList.remove('disabled');
   startSendingVideoInput.disabled = false;
   callTransferButton.onclick = createTransferCall;
+
+  // send dtmf to VoxEngine scenario
   document.addEventListener('keydown', (e) => {
     if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && currentCall) {
-      const keysToSend = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#', 'a', 'b', 'c', 'd', 'e'];
+      // keys which is used to send dtmf
+      const keysToSend = [
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        '*',
+        '#',
+        'a',
+        'b',
+        'c',
+        'd',
+        'e'
+      ,
+      ];
       if (keysToSend.includes(e.key)) {
         currentCall.sendTone(e.key);
       }
     }
-  })
+  });
 };
 
 // return UI elements to the initial state before call
 const callStateDisconnected = () => {
   enableDropdownSelect();
-  startSendingVideoInput.checked = false;
+  remoteVideoHolder.innerHTML = '';
+  remoteVideoHolder.classList.add('empty');
+  inputNumber.value = '';
+  oneToOneCallSelect.checked = true;
   showLocalVideoCheck.disabled = true;
   replaceVideoCheck.disabled = true;
   shareButton.disabled = true;
   stopSharingButton.disabled = true;
+  muteInput.checked = false;
   muteInput.disabled = true;
+  startSendingVideoInput.checked = false;
   startSendingVideoInput.disabled = true;
   muteSwitchGroup.classList.add('disabled');
   startSendingVideoSwitchGroup.classList.add('disabled');
   inputNumber.disabled = false;
   inputNumberTransfer.disabled = false;
+  declineButtonGroup.classList.add('hidden');
+  callButtonsGroup.classList.remove('hidden');
   transferButton.classList.add('hidden');
   sendVideoCheck.disabled = false;
   H264Check.disabled = false;
@@ -152,6 +177,9 @@ const callStateDisconnected = () => {
   callOrConferenceRadioSelectors.forEach((radio) => radio.classList.remove('disabled'));
   oneToOneCallSelect.disabled = false;
   conferenceCallSelect.disabled = false;
+  checkboxGroups.forEach((group) => {
+    group.querySelectorAll('input').forEach((input) => (input.checked = false));
+  });
 };
 
 // return UI elements to the initial state before call

@@ -1,7 +1,6 @@
-let currentCall; // call object (instance of the Call class) with methods
-let isConference; // stores info if the all is a conference, used to manage remoteMedia endpoints (./js/endpoints.js)
-let transferCall; // call object which stores the instance of transfer call
-const logger = new Logger(document.getElementById('logarea')); // creates a Logger instance with write method
+let currentCall; // call object (instance of class Call) with methods
+let transferCall; // call object storing instance of transfer call
+const logger = new Logger(document.getElementById('logarea')); // create instance of Logger with method write
 
 const sdk = VoxImplant.getInstance();
 
