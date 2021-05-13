@@ -14,6 +14,7 @@ const muteSwitchGroup = document.getElementById('switch-mute');
 const callOrConferenceRadioSelectors = document.querySelectorAll('.radio-container');
 const sendVideoCheck = document.getElementById('input-send_video_call');
 const H264Check = document.getElementById('input-h264_call');
+const receiveVideoCheck = document.getElementById('input-receive_video_call');
 const simulcastCheck = document.getElementById('input-simulcast');
 const callButtonsGroup = document.getElementById('call-btn-group');
 const declineButtonGroup = document.getElementById('decline-btn-group');
@@ -33,6 +34,8 @@ const endpointsTable = document.getElementById('endpoints-table');
 const timer = document.querySelector('.timer');
 const remoteVideoHolder = document.querySelector('.remote-video-holder');
 const checkboxGroups = document.querySelectorAll('.checkbox_group');
+const localVideo = document.querySelector('.local-video-holder');
+const noVideoIcon = localVideo.querySelector('.white-circle');
 
 // add listeners to access functionality
 const accessFunctionality = () => {
@@ -51,6 +54,7 @@ const disableConnectingSettings = () => {
   inputNumber.disabled = true;
   sendVideoCheck.disabled = true;
   H264Check.disabled = true;
+  receiveVideoCheck.disabled = true;
   oneToOneCallSelect.disabled = true;
   simulcastCheck.disabled = true;
   conferenceCallSelect.disabled = true;
@@ -81,6 +85,11 @@ const manageConnectingView = () => {
     }
   };
 
+  // check receiveVideo if sendVideo checked, because video calls stable work without parameter receiveVideo is not guaranteed
+  sendVideoCheck.onchange = () => {
+    if (sendVideoCheck.checked) receiveVideoCheck.checked = true;
+  };
+
   // adds the transfer action view
   transferButton.onclick = () => {
     connectingBoard.classList.add('hidden');
@@ -105,18 +114,20 @@ const manageConnectingView = () => {
 };
 
 // make UIelements to manage call, share video and access functionality available
-const callStateConnected = () => {
+const callStateConnected = (video) => {
   if (sendVideoCheck.checked || sendVideoIncomingCall.checked) {
     startSendingVideoInput.checked = true;
   }
-  showLocalVideoCheck.disabled = false;
-  replaceVideoCheck.disabled = false;
-  shareButton.disabled = false;
-  stopSharingButton.disabled = false;
+  if (video) {
+    showLocalVideoCheck.disabled = false;
+    replaceVideoCheck.disabled = false;
+    shareButton.disabled = false;
+    stopSharingButton.disabled = false;
+    startSendingVideoSwitchGroup.classList.remove('disabled');
+    startSendingVideoInput.disabled = false;
+  }
   muteInput.disabled = false;
   muteSwitchGroup.classList.remove('disabled');
-  startSendingVideoSwitchGroup.classList.remove('disabled');
-  startSendingVideoInput.disabled = false;
   callTransferButton.onclick = createTransferCall;
 
   // send dtmf to VoxEngine scenario
@@ -139,7 +150,7 @@ const callStateConnected = () => {
         'b',
         'c',
         'd',
-        'e'
+        'e',
       ];
       if (keysToSend.includes(e.key)) {
         currentCall.sendTone(e.key);
@@ -151,6 +162,11 @@ const callStateConnected = () => {
 // return UI elements to the initial state before call
 const callStateDisconnected = () => {
   enableDropdownSelect();
+  if (!showLocalVideoInput.checked) {
+    localVideo.querySelector('.full_screen_icon') !== null &&
+      localVideo.querySelector('.full_screen_icon').remove();
+    noVideoIcon.classList.remove('hidden');
+  }
   remoteVideoHolder.innerHTML = '';
   remoteVideoHolder.classList.add('empty');
   inputNumber.value = '';
@@ -169,8 +185,12 @@ const callStateDisconnected = () => {
   inputNumberTransfer.disabled = false;
   declineButtonGroup.classList.add('hidden');
   callButtonsGroup.classList.remove('hidden');
+  holdButton.classList.remove('hidden');
+  simulcastContainer.classList.add('hidden');
+  joinAsViewerButton.classList.add('hidden');
   transferButton.classList.add('hidden');
   sendVideoCheck.disabled = false;
+  receiveVideoCheck.disabled = false;
   H264Check.disabled = false;
   simulcastCheck.disabled = false;
   callOrConferenceRadioSelectors.forEach((radio) => radio.classList.remove('disabled'));
@@ -202,4 +222,21 @@ const cleanData = () => {
   logger.clear();
   endpointsTable.innerHTML = '';
   timer.innerText = '00:00:00';
+};
+
+const addFullScreenIconToLocalVideo = () => {
+  const localVideoHolder = document.querySelector('.local-video-holder');
+  const fullScreenIcon = document.createElement('div');
+  fullScreenIcon.classList.add('full_screen_icon');
+  localVideoHolder.querySelector('.full_screen_icon') === null &&
+    localVideoHolder.appendChild(fullScreenIcon);
+  fullScreenIcon.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      localVideoHolder.querySelector('video').classList.remove('full_screen');
+    } else {
+      localVideoHolder.requestFullscreen();
+      localVideoHolder.querySelector('video').classList.add('full_screen');
+    }
+  });
 };

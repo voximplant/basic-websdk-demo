@@ -29,6 +29,8 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
 
   // user endpoint in a conference who has a flag isDefault, which is true, should not be rendering in remote video holder
   if (!endpoint.isDefault || !currentCall.settings.isConference) {
+    document.getElementById('remote_video_holder').classList.remove('empty');
+
     // render media in the container
     endpointsMedia[endpoint.id].push(mediaRendererKind);
 
@@ -44,10 +46,29 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
     ) {
       document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
     }
-
-    // render a video stream in the remote video holder
-    const videoHolder = document.querySelector('.remote-video-holder');
-    mediaRenderer.render(videoHolder);
+    if (mediaRendererKind === 'video') {
+      // render a video stream in the remote video holder
+      const videoContainer = document.createElement('div');
+      videoContainer.classList.add(
+        'video_container',
+        `video_container_${endpoint.id}`,
+        `video_container_${mediaRenderer.id}`
+      );
+      document.querySelector('.remote-video-holder').appendChild(videoContainer);
+      mediaRenderer.render(videoContainer);
+      const fullScreenIcon = document.createElement('div');
+      fullScreenIcon.classList.add('full_screen_icon');
+      videoContainer.appendChild(fullScreenIcon);
+      fullScreenIcon.addEventListener('click', (event) => {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+          mediaRenderer.element.classList.remove('full_screen');
+        } else {
+          mediaRenderer.element.parentElement.requestFullscreen();
+          mediaRenderer.element.classList.add('full_screen');
+        }
+      });
+    }
   }
 
   mediaRenderer.element.addEventListener('click', (event) => {
@@ -73,7 +94,8 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
       }
     } else {
       if (mediaRenderer.enabled) {
-        // enable/disable video stream reception from remote participants mediaRenderer.disable();
+        // enable/disable video stream reception from remote participants
+        mediaRenderer.disable();
       } else {
         mediaRenderer.enable();
       }
@@ -120,6 +142,9 @@ const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
     ) {
       addNoVideoContainer(endpoint.id);
     }
+    if (mediaRenderer.kind !== 'audio') {
+      document.querySelector(`.video_container_${CSS.escape(mediaRenderer.id)}`).remove();
+    }
   }
   // make a cell with removed media stream inactive
   const removedMedia = document.querySelector(`.${CSS.escape(mediaRenderer.id)}`);
@@ -129,10 +154,15 @@ const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
 // handle an endpoint removed
 const onEndpointRemoved = ({ endpoint }) => {
   // show an empty remote video container
-  document.getElementById('remote_video_holder').classList.add('empty');
+  if (Object.values(endpointsMedia).every((endpoint) => endpoint.length === 0)) {
+    document.getElementById('remote_video_holder').classList.add('empty');
+  }
   // remove the black window
   document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null &&
     document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
+  document
+    .querySelectorAll(`.video_container_${CSS.escape(endpoint.id)}`)
+    .forEach((container) => container.remove());
   // make the endpoint id cell inactive
   document.querySelector(`.${CSS.escape(endpoint.id)}-id`).classList.add('inactive');
 };

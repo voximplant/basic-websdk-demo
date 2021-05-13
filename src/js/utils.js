@@ -1,4 +1,4 @@
-function simpleStringify (object) {
+function simpleStringify(object) {
   const simpleObject = Object.keys(object)
     .filter((item) => typeof object[item] === 'string')
     .reduce((acc, item) => {
@@ -21,7 +21,7 @@ const Logger = function (element) {
     textArea.value = '';
   };
 
-  function render () {
+  function render() {
     textArea.value = logRecords.join('\r\n');
     textArea.scrollTop = textArea.scrollHeight;
   }

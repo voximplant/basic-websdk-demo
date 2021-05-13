@@ -19,22 +19,26 @@ const addToDropdown = (device, selectElement, selected, items) => {
     selected.textContent = device.name;
     selected.id = device.id;
     option.click();
-  }
-}
+  };
+};
 
 // hide/show the list of devices
 const toggleDropdown = (e) => {
   e.target.nextElementSibling.classList.toggle('hidden');
   e.target.classList.toggle('opened');
-}
+};
 
 // disable another device selection
-const disableDropdownSelect = () => {
-  for (const element of document.getElementsByClassName('select-selected')) {
-    element.classList.add('disabled');
-    element.removeEventListener('click', toggleDropdown);
+const disableDropdownSelect = (viewer) => {
+  if (viewer) {
+    document.querySelector('.selected-microphone').classList.add('disabled');
+    document.querySelector('.selected-microphone').removeEventListener('click', toggleDropdown);
+    document.querySelector('.selected-speaker').classList.add('disabled');
+    document.querySelector('.selected-speaker').removeEventListener('click', toggleDropdown);
   }
-}
+  document.querySelector('.selected-camera').classList.add('disabled');
+  document.querySelector('.selected-camera').removeEventListener('click', toggleDropdown);
+};
 
 // enable another device selection
 const enableDropdownSelect = () => {
@@ -42,4 +46,4 @@ const enableDropdownSelect = () => {
     element.classList.remove('disabled');
     element.addEventListener('click', toggleDropdown);
   }
-}
+};
