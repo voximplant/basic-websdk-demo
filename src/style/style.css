@@ -571,12 +571,15 @@ video.full_screen {
 }
 video {
     height: 225px;
+
 }
 .video_container {
     position: relative;
     display: inline-block;
     background-color: black;
     height: 225px;
+    display: flex;
+    justify-content: center;
 }
 @media (min-width: 700px){
     .remote-video-holder {
