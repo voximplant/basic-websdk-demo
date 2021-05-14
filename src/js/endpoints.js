@@ -29,6 +29,8 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
 
   // user endpoint in a conference who has a flag isDefault, which is true, should not be rendering in remote video holder
   if (!endpoint.isDefault || !currentCall.settings.isConference) {
+    document.getElementById('remote_video_holder').classList.remove('empty');
+
     // render media in the container
     endpointsMedia[endpoint.id].push(mediaRendererKind);
 
@@ -140,6 +142,9 @@ const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
     ) {
       document.querySelector(`.video_container_${CSS.escape(mediaRenderer.id)}`).remove();
       addNoVideoContainer(endpoint.id);
+    }
+    if (!endpointsMedia[endpoint.id].length) {
+      document.getElementById('remote_video_holder').classList.add('empty');
     }
   }
   // make a cell with removed media stream inactive
