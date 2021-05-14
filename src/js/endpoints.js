@@ -44,10 +44,29 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
     ) {
       document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
     }
-
-    // render a video stream in the remote video holder
-    const videoHolder = document.querySelector('.remote-video-holder');
-    mediaRenderer.render(videoHolder);
+    if (mediaRendererKind === 'video') {
+      // render a video stream in the remote video holder
+      const videoContainer = document.createElement('div');
+      videoContainer.classList.add(
+        'video_container',
+        `video_container_${endpoint.id}`,
+        `video_container_${mediaRenderer.id}`
+      );
+      document.querySelector('.remote-video-holder').appendChild(videoContainer);
+      mediaRenderer.render(videoContainer);
+      const fullScreenIcon = document.createElement('div');
+      fullScreenIcon.classList.add('full_screen_icon');
+      videoContainer.appendChild(fullScreenIcon);
+      fullScreenIcon.addEventListener('click', (event) => {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+          mediaRenderer.element.classList.remove('full_screen');
+        } else {
+          mediaRenderer.element.parentElement.requestFullscreen();
+          mediaRenderer.element.classList.add('full_screen');
+        }
+      });
+    }
   }
 
   mediaRenderer.element.addEventListener('click', (event) => {
@@ -73,7 +92,8 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
       }
     } else {
       if (mediaRenderer.enabled) {
-       // enable/disable video stream reception from remote participants mediaRenderer.disable();
+        // enable/disable video stream reception from remote participants
+        mediaRenderer.disable();
       } else {
         mediaRenderer.enable();
       }
@@ -118,6 +138,7 @@ const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
       endpointsMedia[endpoint.id].length &&
       endpointsMedia[endpoint.id].every((media) => media === 'audio')
     ) {
+      document.querySelector(`.video_container_${CSS.escape(mediaRenderer.id)}`).remove();
       addNoVideoContainer(endpoint.id);
     }
   }
@@ -133,6 +154,9 @@ const onEndpointRemoved = ({ endpoint }) => {
   // remove the black window
   document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null &&
     document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
+  document
+    .querySelectorAll(`.video_container_${CSS.escape(endpoint.id)}`)
+    .forEach((container) => container.remove());
   // make the endpoint id cell inactive
   document.querySelector(`.${CSS.escape(endpoint.id)}-id`).classList.add('inactive');
 };

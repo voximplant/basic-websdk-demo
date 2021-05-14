@@ -516,6 +516,19 @@ input:disabled {
     color: #FFFFFF;
 }
 
+.full_screen_icon {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    right: 10px;
+    top: 10px;
+    background-image: url("../assets/full_screen.svg");
+}
+
+video.full_screen {
+    width: 100%;
+    height: 100%;
+}
 .remote-video-holder{
     display: grid;
     grid-template-columns: repeat(auto-fit,400px);
@@ -537,6 +550,7 @@ input:disabled {
 }
 
 .local-video-holder, .participant-container {
+    position: relative;
     display: flex;
     height: 225px;
     width: 400px;
@@ -556,8 +570,12 @@ input:disabled {
     background-position: center;
 }
 video {
-    display: inline-block;
     height: 225px;
+}
+.video_container {
+    position: relative;
+    display: inline-block;
+    background-color: black;
 }
 @media (min-width: 700px){
     .remote-video-holder {

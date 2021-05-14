@@ -66,6 +66,19 @@ const showLocalVideo = () => {
     if (isShow) {
       sdk.showLocalVideo(true);
       noVideoSign.classList.add('hidden');
+      const localVideoHolder = document.querySelector('.local-video-holder');
+      const fullScreenIcon = document.createElement('div');
+      fullScreenIcon.classList.add('full_screen_icon');
+      localVideoHolder.appendChild(fullScreenIcon);
+      fullScreenIcon.addEventListener('click', () => {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+          localVideoHolder.querySelector('video').classList.remove('full_screen');
+        } else {
+          localVideoHolder.requestFullscreen();
+          localVideoHolder.querySelector('video').classList.add('full_screen');
+        }
+      });
     } else {
       sdk.showLocalVideo(false);
       noVideoSign.classList.remove('hidden');
