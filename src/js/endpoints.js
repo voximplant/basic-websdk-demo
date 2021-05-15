@@ -140,11 +140,10 @@ const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
       endpointsMedia[endpoint.id].length &&
       endpointsMedia[endpoint.id].every((media) => media === 'audio')
     ) {
-      document.querySelector(`.video_container_${CSS.escape(mediaRenderer.id)}`).remove();
       addNoVideoContainer(endpoint.id);
     }
-    if (!endpointsMedia[endpoint.id].length) {
-      document.getElementById('remote_video_holder').classList.add('empty');
+    if (mediaRenderer.kind !== 'audio') {
+      document.querySelector(`.video_container_${CSS.escape(mediaRenderer.id)}`).remove();
     }
   }
   // make a cell with removed media stream inactive
@@ -155,7 +154,9 @@ const onRemoteMediaRemoved = ({ endpoint, mediaRenderer }) => {
 // handle an endpoint removed
 const onEndpointRemoved = ({ endpoint }) => {
   // show an empty remote video container
-  document.getElementById('remote_video_holder').classList.add('empty');
+  if (Object.values(endpointsMedia).every((endpoint) => endpoint.length === 0)) {
+    document.getElementById('remote_video_holder').classList.add('empty');
+  }
   // remove the black window
   document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null &&
     document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();

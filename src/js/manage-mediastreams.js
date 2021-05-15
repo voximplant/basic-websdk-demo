@@ -1,13 +1,15 @@
-const noVideoSign = document.querySelector('.local-video-holder').querySelector('.white-circle');
+const localVideoHolder = document.querySelector('.local-video-holder');
+const noVideoSign = localVideoHolder.querySelector('.white-circle');
 const showLocalVideoSharing = document.getElementById('input-show-local-video');
 const showLocalVideoOptional = document.getElementById('show-local-video-switch');
 const replaceVideo = document.getElementById('input-replace-video');
 
 // stop screen sharing
 const stopShare = () => {
-  !showLocalVideoOptional.checked &&
-    showLocalVideoSharing.checked &&
+  if (!showLocalVideoOptional.checked && showLocalVideoSharing.checked) {
     noVideoSign.classList.remove('hidden');
+    localVideoHolder.querySelector('.full_screen_icon').remove();
+  }
   if (currentCall !== null) {
     currentCall
       .stopSharingScreen()
@@ -24,7 +26,10 @@ const stopShare = () => {
 // start screen sharing with options: replace current video, show shared screen in local video, depending on user settings selected
 const startShare = () => {
   if (currentCall !== null) {
-    showLocalVideoSharing.checked && noVideoSign.classList.add('hidden');
+    if (showLocalVideoSharing.checked) {
+      noVideoSign.classList.add('hidden');
+      addFullScreenIconToLocalVideo();
+    }
     currentCall
       .shareScreen(showLocalVideoSharing.checked, replaceVideo.checked)
       .then((e) => {
@@ -50,10 +55,12 @@ const startShare = () => {
           transceiverSharing.sender.track.addEventListener('ended', () => {
             changeAccessToSharingElements();
             noVideoSign.classList.remove('hidden');
+            localVideoHolder.querySelector('.full_screen_icon').remove();
           });
       })
       .catch((e) => {
         noVideoSign.classList.remove('hidden');
+        localVideoHolder.querySelector('.full_screen_icon').remove();
         logger.write(e.message);
       });
   }
@@ -62,24 +69,11 @@ const startShare = () => {
 // render the local video
 const showLocalVideo = () => {
   const isShow = document.getElementById('show-local-video-switch').checked;
-  const localVideoHolder = document.querySelector('.local-video-holder');
-  const fullScreenIcon = document.createElement('div');
-  fullScreenIcon.classList.add('full_screen_icon');
   try {
     if (isShow) {
       sdk.showLocalVideo(true);
       noVideoSign.classList.add('hidden');
-      localVideoHolder.querySelector('.full_screen_icon') === null &&
-        localVideoHolder.appendChild(fullScreenIcon);
-      fullScreenIcon.addEventListener('click', () => {
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-          localVideoHolder.querySelector('video').classList.remove('full_screen');
-        } else {
-          localVideoHolder.requestFullscreen();
-          localVideoHolder.querySelector('video').classList.add('full_screen');
-        }
-      });
+      addFullScreenIconToLocalVideo();
     } else {
       sdk.showLocalVideo(false);
       localVideoHolder.querySelector('.full_screen_icon').remove();

@@ -178,6 +178,8 @@ const callStateDisconnected = () => {
   inputNumberTransfer.disabled = false;
   declineButtonGroup.classList.add('hidden');
   callButtonsGroup.classList.remove('hidden');
+  holdButton.classList.remove('hidden');
+  joinAsViewerButton.classList.add('hidden');
   transferButton.classList.add('hidden');
   sendVideoCheck.disabled = false;
   receiveVideoCheck.disabled = false;
@@ -212,4 +214,21 @@ const cleanData = () => {
   logger.clear();
   endpointsTable.innerHTML = '';
   timer.innerText = '00:00:00';
+};
+
+const addFullScreenIconToLocalVideo = () => {
+  const localVideoHolder = document.querySelector('.local-video-holder');
+  const fullScreenIcon = document.createElement('div');
+  fullScreenIcon.classList.add('full_screen_icon');
+  localVideoHolder.querySelector('.full_screen_icon') === null &&
+    localVideoHolder.appendChild(fullScreenIcon);
+  fullScreenIcon.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      localVideoHolder.querySelector('video').classList.remove('full_screen');
+    } else {
+      localVideoHolder.requestFullscreen();
+      localVideoHolder.querySelector('video').classList.add('full_screen');
+    }
+  });
 };
