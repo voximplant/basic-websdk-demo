@@ -62,14 +62,15 @@ const startShare = () => {
 // render the local video
 const showLocalVideo = () => {
   const isShow = document.getElementById('show-local-video-switch').checked;
+  const localVideoHolder = document.querySelector('.local-video-holder');
+  const fullScreenIcon = document.createElement('div');
+  fullScreenIcon.classList.add('full_screen_icon');
   try {
     if (isShow) {
       sdk.showLocalVideo(true);
       noVideoSign.classList.add('hidden');
-      const localVideoHolder = document.querySelector('.local-video-holder');
-      const fullScreenIcon = document.createElement('div');
-      fullScreenIcon.classList.add('full_screen_icon');
-      localVideoHolder.appendChild(fullScreenIcon);
+      localVideoHolder.querySelector('.full_screen_icon') === null &&
+        localVideoHolder.appendChild(fullScreenIcon);
       fullScreenIcon.addEventListener('click', () => {
         if (document.fullscreenElement) {
           document.exitFullscreen();
@@ -81,6 +82,7 @@ const showLocalVideo = () => {
       });
     } else {
       sdk.showLocalVideo(false);
+      localVideoHolder.querySelector('.full_screen_icon').remove();
       noVideoSign.classList.remove('hidden');
     }
   } catch (e) {
