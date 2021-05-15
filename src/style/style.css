@@ -523,6 +523,7 @@ input:disabled {
     right: 10px;
     top: 10px;
     background-image: url("../assets/full_screen.svg");
+    z-index: 1;
 }
 
 video.full_screen {

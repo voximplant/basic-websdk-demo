@@ -34,6 +34,8 @@ const endpointsTable = document.getElementById('endpoints-table');
 const timer = document.querySelector('.timer');
 const remoteVideoHolder = document.querySelector('.remote-video-holder');
 const checkboxGroups = document.querySelectorAll('.checkbox_group');
+const localVideo = document.querySelector('.local-video-holder');
+const noVideoIcon = localVideo.querySelector('.white-circle');
 
 // add listeners to access functionality
 const accessFunctionality = () => {
@@ -160,6 +162,11 @@ const callStateConnected = (video) => {
 // return UI elements to the initial state before call
 const callStateDisconnected = () => {
   enableDropdownSelect();
+  if (!showLocalVideoInput.checked) {
+    localVideo.querySelector('.full_screen_icon') !== null &&
+      localVideo.querySelector('.full_screen_icon').remove();
+    noVideoIcon.classList.remove('hidden');
+  }
   remoteVideoHolder.innerHTML = '';
   remoteVideoHolder.classList.add('empty');
   inputNumber.value = '';
@@ -179,6 +186,7 @@ const callStateDisconnected = () => {
   declineButtonGroup.classList.add('hidden');
   callButtonsGroup.classList.remove('hidden');
   holdButton.classList.remove('hidden');
+  simulcastContainer.classList.add('hidden');
   joinAsViewerButton.classList.add('hidden');
   transferButton.classList.add('hidden');
   sendVideoCheck.disabled = false;
