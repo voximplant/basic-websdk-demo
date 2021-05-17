@@ -36,22 +36,29 @@ const createCall = () => {
     numberInput.onkeypress = () => numberInput.classList.remove('invalid');
     return;
   }
-  const callSettings = {
-    number,
-    video: {
-      sendVideo: document.getElementById('input-send_video_call').checked,
-      receiveVideo: true
-    },
-    H264first: document.getElementById('input-h264_call')
-  };
+
+  const sendVideo = document.getElementById('input-send_video_call').checked || false;
+  const receiveVideo = document.getElementById('input-receive_video_call').checked || false;
+  const H264first = document.getElementById('input-h264_call').checked || false;
+  const simulcast = document.getElementById('input-simulcast').checked || false;
+
+  const callSettings = { number };
+  if (receiveVideo && !sendVideo) {
+    callSettings.video = { sendVideo, receiveVideo };
+    callSettings.H264first = H264first;
+  }
+  if (sendVideo) {
+    callSettings.video = { sendVideo, receiveVideo };
+  }
+
   if (document.getElementById('conf-call-btn').checked) {
-    callSettings.simulcast = document.getElementById('input-simulcast').checked;
+    callSettings.simulcast = simulcast;
     currentCall = sdk.callConference(callSettings);
   } else {
     currentCall = sdk.call(callSettings);
   }
   disableConnectingSettings();
-  setUpCall({ currentCall, number });
+  setUpCall({ currentCall, number, video: sendVideo || receiveVideo });
 };
 
 const createTransferCall = () => {
@@ -94,7 +101,7 @@ const createTransferCall = () => {
   });
 };
 
-const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
+const setUpCall = ({ currentCall, isIncoming, number, viewer, video }) => {
   let prefix = currentCall.settings.isConference ? 'Call conference to' : 'Call to';
   if (isIncoming) prefix = 'Incoming call from';
   logger.write(`${prefix} ${number}...`);
@@ -112,11 +119,13 @@ const setUpCall = ({ currentCall, isIncoming, number, viewer }) => {
     if (isIncoming || viewer) {
       disableConnectingSettings();
     }
-    if (viewer) {
-      disableDropdownSelect();
+    if (viewer || (!video && !isIncoming)) {
+      disableDropdownSelect(viewer);
     }
-    if (!viewer) {
-      callStateConnected();
+    if (isIncoming) {
+      callStateConnected(true);
+    } else if (!viewer) {
+      callStateConnected(video);
     }
   });
 
