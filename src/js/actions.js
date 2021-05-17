@@ -150,7 +150,7 @@ const callStateConnected = (video) => {
         'b',
         'c',
         'd',
-        'e'
+        'e',
       ];
       if (keysToSend.includes(e.key)) {
         currentCall.sendTone(e.key);

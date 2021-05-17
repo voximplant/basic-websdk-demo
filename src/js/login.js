@@ -45,7 +45,7 @@ const authDataFill = ({
   serverIp,
   serverIps,
   isDebugInfo,
-  connectivityCheck
+  connectivityCheck,
 }) => {
   userNameInput.value = username || '';
   passwordInput.value = password || '';
@@ -102,7 +102,7 @@ const init = async (username, password) => {
     await sdk.init({
       localVideoContainerId: 'local_video_holder', // Id of HTMLElement that is used as a default container for local video elements
       serverIp: serverIpInput.value, // IP address of a particular media gateway for connection. If it's not specified, IP address will be chosen automatically
-      showDebugInfo: debugInfoInput.checked // Show debug info in the console
+      showDebugInfo: debugInfoInput.checked, // Show debug info in the console
     });
   } catch (e) {}
   await connectToVoxCloud(username, password, connectivityCheckInput.checked);

@@ -15,7 +15,7 @@ const handleIncomingCall = ({ call }) => {
         {},
         {
           sendVideo: document.getElementById('input-send_video_incoming_call').checked,
-          receiveVideo: true
+          receiveVideo: true,
         }
       );
     document.getElementById('incoming-call').classList.add('hidden');
@@ -73,9 +73,9 @@ const createTransferCall = () => {
     number,
     video: {
       sendVideo: document.getElementById('input-send_video_call-transfer').checked,
-      receiveVideo: true
+      receiveVideo: true,
     },
-    H264first: document.getElementById('input-h264_call-transfer')
+    H264first: document.getElementById('input-h264_call-transfer'),
   });
   holdCall();
   document.getElementById('input-number-transfer').disabled = true;

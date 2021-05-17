@@ -1,22 +1,21 @@
 // get the output and input devices to create dropdown list to let user to use additional devices
 const setHardwareSettings = async () => {
   const cams = (await getCameras()) || [];
-  if (!cams.map(cam => cam.id).includes('default')) {
+  if (!cams.map((cam) => cam.id).includes('default')) {
     cams.unshift({ id: 'default', name: 'default' });
   }
   const selectElementCamera = document.getElementById('change-camera');
   const camItems = document.querySelector('.camera-items');
   const selectedCamera = document.querySelector('.selected-camera');
   selectedCamera.addEventListener('click', toggleDropdown);
-  cams
-    .forEach((cam) => {
-      addToDropdown(cam, selectElementCamera, selectedCamera, camItems)
-    });
+  cams.forEach((cam) => {
+    addToDropdown(cam, selectElementCamera, selectedCamera, camItems);
+  });
 
   const cameraGroups = new Set(cams.map((cam) => cam.group));
   const mics = (await getMicrophones()) || [];
-  if (!mics.map(mic => mic.id).includes('default')) {
-    mics.unshift({ id: 'default', name: 'default' })
+  if (!mics.map((mic) => mic.id).includes('default')) {
+    mics.unshift({ id: 'default', name: 'default' });
   }
   const selectElementMicrophone = document.getElementById('change-microphone');
   const micItems = document.querySelector('.microphone-items');
@@ -29,22 +28,24 @@ const setHardwareSettings = async () => {
     });
 
   const speakers = (await getSpeakers()) || [];
-  if (!speakers.map(speaker => speaker.id).includes('default')) {
+  if (!speakers.map((speaker) => speaker.id).includes('default')) {
     speakers.unshift({ id: 'default', name: 'default' });
   }
   const selectElementSpeaker = document.getElementById('change-speaker');
   const speakerItems = document.querySelector('.speaker-items');
   const selectedSpeaker = document.querySelector('.selected-speaker');
   selectedSpeaker.addEventListener('click', toggleDropdown);
-  speakers
-    .forEach((speaker) => {
-      addToDropdown(speaker, selectElementSpeaker, selectedSpeaker, speakerItems);
-    });
+  speakers.forEach((speaker) => {
+    addToDropdown(speaker, selectElementSpeaker, selectedSpeaker, speakerItems);
+  });
 
   document.onclick = (e) => {
     const allOptionItems = document.getElementsByClassName('select-items');
     for (const optionItems of allOptionItems) {
-      if (!optionItems.classList.contains('hidden') && optionItems.previousElementSibling !== e.target) {
+      if (
+        !optionItems.classList.contains('hidden') &&
+        optionItems.previousElementSibling !== e.target
+      ) {
         optionItems.classList.add('hidden');
       }
     }
@@ -54,7 +55,7 @@ const setHardwareSettings = async () => {
         selected.classList.remove('opened');
       }
     }
-  }
+  };
 
   // add event listeners to select elements
   document.getElementById('change-microphone').onclick = (e) => {
@@ -70,7 +71,7 @@ const setHardwareSettings = async () => {
   document.getElementById('change-speaker').onclick = (e) => {
     if (e.target.value === 'default') return;
     changeSpeaker(e.target.value);
-  }
+  };
 };
 
 // set up a device according to audio/video settings
@@ -100,7 +101,7 @@ const changeSpeaker = (outputId) => {
     VoxImplant.Hardware.AudioDeviceManager.get().setCallAudioSettings(currentCall, audioParams);
   }
   VoxImplant.Hardware.AudioDeviceManager.get().setDefaultAudioSettings(audioParams);
-}
+};
 
 // get available microphones
 const getMicrophones = async () => {
