@@ -236,19 +236,43 @@ const cleanData = () => {
   timer.innerText = '00:00:00';
 };
 
-const addFullScreenIconToLocalVideo = () => {
-  const localVideoHolder = document.querySelector('.local-video-holder');
+const addFullScreenIconTo = (videoContainer, videoElement) => {
   const fullScreenIcon = document.createElement('div');
   fullScreenIcon.classList.add('full_screen_icon');
-  localVideoHolder.querySelector('.full_screen_icon') === null &&
-    localVideoHolder.appendChild(fullScreenIcon);
+  if (videoContainer.querySelector('.full_screen_icon') === null) {
+    videoContainer.appendChild(fullScreenIcon);
+  }
   fullScreenIcon.addEventListener('click', () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-      localVideoHolder.querySelector('video').classList.remove('full_screen');
+    if (isIosSafari()) {
+      if (document.webkitFullscreenElement) {
+        videoElement.webkitExitFullscreen();
+        videoElement.classList.remove('full_screen');
+      } else {
+        videoElement.classList.add('full_screen');
+        videoElement.webkitEnterFullscreen();
+      }
     } else {
-      localVideoHolder.requestFullscreen();
-      localVideoHolder.querySelector('video').classList.add('full_screen');
+      if (document.fullscreenElement) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        videoElement.classList.remove('full_screen');
+      } else {
+        if (videoContainer.requestFullscreen) {
+          videoContainer.requestFullscreen();
+        } else if (videoContainer.webkitRequestFullscreen) {
+          videoContainer.webkitRequestFullscreen();
+        }
+      }
+      videoElement.classList.add('full_screen');
     }
   });
+  if (isIosSafari()) {
+    // Play video after exiting from fullscreen mode
+    videoElement.addEventListener('pause', () => {
+      videoElement.play().catch();
+    });
+  }
 };

@@ -28,7 +28,9 @@ const startShare = () => {
   if (currentCall !== null) {
     if (showLocalVideoSharing.checked) {
       noVideoSign.classList.add('hidden');
-      addFullScreenIconToLocalVideo();
+      const localVideoContainer = document.querySelector('.local-video-holder');
+      const localVideo = localVideoContainer.querySelector('video');
+      addFullScreenIconTo(localVideoContainer, localVideo);
     }
     currentCall
       .shareScreen(showLocalVideoSharing.checked, replaceVideo.checked)
@@ -71,9 +73,12 @@ const showLocalVideo = () => {
   const isShow = document.getElementById('show-local-video-switch').checked;
   try {
     if (isShow) {
-      sdk.showLocalVideo(true);
-      noVideoSign.classList.add('hidden');
-      addFullScreenIconToLocalVideo();
+      sdk.showLocalVideo(true).then(() => {
+        noVideoSign.classList.add('hidden');
+        const localVideoContainer = document.querySelector('.local-video-holder');
+        const localVideo = localVideoContainer.querySelector('video');
+        addFullScreenIconTo(localVideoContainer, localVideo);
+      });
     } else {
       sdk.showLocalVideo(false);
       localVideoHolder.querySelector('.full_screen_icon')?.remove();
