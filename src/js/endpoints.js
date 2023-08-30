@@ -157,6 +157,7 @@ const onEndpointRemoved = ({ endpoint }) => {
   if (Object.values(endpointsMedia).every((endpoint) => endpoint.length === 0)) {
     document.getElementById('remote_video_holder').classList.add('empty');
   }
+  document.getElementById('incoming-call').classList.add('hidden');
   // remove the black window
   document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null &&
     document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();

@@ -8,7 +8,7 @@ const replaceVideo = document.getElementById('input-replace-video');
 const stopShare = () => {
   if (!showLocalVideoOptional.checked && showLocalVideoSharing.checked) {
     noVideoSign.classList.remove('hidden');
-    localVideoHolder.querySelector('.full_screen_icon').remove();
+    localVideoHolder.querySelector('.full_screen_icon')?.remove();
   }
   if (currentCall !== null) {
     currentCall
@@ -55,12 +55,12 @@ const startShare = () => {
           transceiverSharing.sender.track.addEventListener('ended', () => {
             changeAccessToSharingElements();
             noVideoSign.classList.remove('hidden');
-            localVideoHolder.querySelector('.full_screen_icon').remove();
+            localVideoHolder.querySelector('.full_screen_icon')?.remove();
           });
       })
       .catch((e) => {
         noVideoSign.classList.remove('hidden');
-        localVideoHolder.querySelector('.full_screen_icon').remove();
+        localVideoHolder.querySelector('.full_screen_icon')?.remove();
         logger.write(e.message);
       });
   }
@@ -76,7 +76,7 @@ const showLocalVideo = () => {
       addFullScreenIconToLocalVideo();
     } else {
       sdk.showLocalVideo(false);
-      localVideoHolder.querySelector('.full_screen_icon').remove();
+      localVideoHolder.querySelector('.full_screen_icon')?.remove();
       noVideoSign.classList.remove('hidden');
     }
   } catch (e) {
@@ -92,6 +92,8 @@ const sendingVideo = () => {
   // if video sending is switched off, screen sharing also stops, so starting a new screen share should be available
   if (!startSendingVideo) {
     changeAccessToSharingElements();
+    noVideoSign.classList.remove('hidden');
+    localVideoHolder.querySelector('.full_screen_icon')?.remove();
   }
   if (currentCall) {
     currentCall

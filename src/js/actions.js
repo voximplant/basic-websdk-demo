@@ -39,6 +39,11 @@ const noVideoIcon = localVideo.querySelector('.white-circle');
 
 // add listeners to access functionality
 const accessFunctionality = () => {
+  inputNumber.onkeyup = (e) => {
+    if (e.key === 'Enter') {
+      createCall();
+    }
+  };
   callButton.onclick = createCall;
   joinAsViewerButton.onclick = joinAsViewer;
   showLocalVideoInput.onchange = showLocalVideo;
@@ -87,7 +92,12 @@ const manageConnectingView = () => {
 
   // check receiveVideo if sendVideo checked, because video calls stable work without parameter receiveVideo is not guaranteed
   sendVideoCheck.onchange = () => {
-    if (sendVideoCheck.checked) receiveVideoCheck.checked = true;
+    if (sendVideoCheck.checked) {
+      receiveVideoCheck.checked = true;
+      receiveVideoCheck.disabled = true;
+    } else {
+      receiveVideoCheck.disabled = false;
+    }
   };
 
   // adds the transfer action view
@@ -167,9 +177,11 @@ const callStateDisconnected = () => {
       localVideo.querySelector('.full_screen_icon').remove();
     noVideoIcon.classList.remove('hidden');
   }
+  if (!document.getElementById('incoming-call').classList.contains('hidden')) {
+    document.getElementById('incoming-call').classList.add('hidden');
+  }
   remoteVideoHolder.innerHTML = '';
   remoteVideoHolder.classList.add('empty');
-  inputNumber.value = '';
   oneToOneCallSelect.checked = true;
   showLocalVideoCheck.disabled = true;
   replaceVideoCheck.disabled = true;
