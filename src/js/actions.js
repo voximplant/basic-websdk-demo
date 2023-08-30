@@ -39,6 +39,11 @@ const noVideoIcon = localVideo.querySelector('.white-circle');
 
 // add listeners to access functionality
 const accessFunctionality = () => {
+  inputNumber.onkeyup = (e) => {
+    if (e.key === 'Enter') {
+      createCall();
+    }
+  };
   callButton.onclick = createCall;
   joinAsViewerButton.onclick = joinAsViewer;
   showLocalVideoInput.onchange = showLocalVideo;
@@ -87,7 +92,12 @@ const manageConnectingView = () => {
 
   // check receiveVideo if sendVideo checked, because video calls stable work without parameter receiveVideo is not guaranteed
   sendVideoCheck.onchange = () => {
-    if (sendVideoCheck.checked) receiveVideoCheck.checked = true;
+    if (sendVideoCheck.checked) {
+      receiveVideoCheck.checked = true;
+      receiveVideoCheck.disabled = true;
+    } else {
+      receiveVideoCheck.disabled = false;
+    }
   };
 
   // adds the transfer action view
@@ -167,9 +177,11 @@ const callStateDisconnected = () => {
       localVideo.querySelector('.full_screen_icon').remove();
     noVideoIcon.classList.remove('hidden');
   }
+  if (!document.getElementById('incoming-call').classList.contains('hidden')) {
+    document.getElementById('incoming-call').classList.add('hidden');
+  }
   remoteVideoHolder.innerHTML = '';
   remoteVideoHolder.classList.add('empty');
-  inputNumber.value = '';
   oneToOneCallSelect.checked = true;
   showLocalVideoCheck.disabled = true;
   replaceVideoCheck.disabled = true;
@@ -224,19 +236,43 @@ const cleanData = () => {
   timer.innerText = '00:00:00';
 };
 
-const addFullScreenIconToLocalVideo = () => {
-  const localVideoHolder = document.querySelector('.local-video-holder');
+const addFullScreenIconTo = (videoContainer, videoElement) => {
   const fullScreenIcon = document.createElement('div');
   fullScreenIcon.classList.add('full_screen_icon');
-  localVideoHolder.querySelector('.full_screen_icon') === null &&
-    localVideoHolder.appendChild(fullScreenIcon);
+  if (videoContainer.querySelector('.full_screen_icon') === null) {
+    videoContainer.appendChild(fullScreenIcon);
+  }
   fullScreenIcon.addEventListener('click', () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-      localVideoHolder.querySelector('video').classList.remove('full_screen');
+    if (isIosSafari()) {
+      if (document.webkitFullscreenElement) {
+        videoElement.webkitExitFullscreen();
+        videoElement.classList.remove('full_screen');
+      } else {
+        videoElement.classList.add('full_screen');
+        videoElement.webkitEnterFullscreen();
+      }
     } else {
-      localVideoHolder.requestFullscreen();
-      localVideoHolder.querySelector('video').classList.add('full_screen');
+      if (document.fullscreenElement) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        videoElement.classList.remove('full_screen');
+      } else {
+        if (videoContainer.requestFullscreen) {
+          videoContainer.requestFullscreen();
+        } else if (videoContainer.webkitRequestFullscreen) {
+          videoContainer.webkitRequestFullscreen();
+        }
+      }
+      videoElement.classList.add('full_screen');
     }
   });
+  if (isIosSafari()) {
+    // Play video after exiting from fullscreen mode
+    videoElement.addEventListener('pause', () => {
+      videoElement.play().catch();
+    });
+  }
 };

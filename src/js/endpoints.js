@@ -56,18 +56,7 @@ const onRemoteMediaAdded = ({ endpoint, mediaRenderer }) => {
       );
       document.querySelector('.remote-video-holder').appendChild(videoContainer);
       mediaRenderer.render(videoContainer);
-      const fullScreenIcon = document.createElement('div');
-      fullScreenIcon.classList.add('full_screen_icon');
-      videoContainer.appendChild(fullScreenIcon);
-      fullScreenIcon.addEventListener('click', (event) => {
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-          mediaRenderer.element.classList.remove('full_screen');
-        } else {
-          mediaRenderer.element.parentElement.requestFullscreen();
-          mediaRenderer.element.classList.add('full_screen');
-        }
-      });
+      addFullScreenIconTo(videoContainer, mediaRenderer.element);
     }
   }
 
@@ -157,6 +146,7 @@ const onEndpointRemoved = ({ endpoint }) => {
   if (Object.values(endpointsMedia).every((endpoint) => endpoint.length === 0)) {
     document.getElementById('remote_video_holder').classList.add('empty');
   }
+  document.getElementById('incoming-call').classList.add('hidden');
   // remove the black window
   document.querySelector(`.participant-${CSS.escape(endpoint.id)}`) !== null &&
     document.querySelector(`.participant-${CSS.escape(endpoint.id)}`).remove();
