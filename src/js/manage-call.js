@@ -43,12 +43,9 @@ const createCall = () => {
   const simulcast = document.getElementById('input-simulcast').checked || false;
 
   const callSettings = { number };
-  if (receiveVideo && !sendVideo) {
-    callSettings.video = { sendVideo, receiveVideo };
+  if (receiveVideo || sendVideo) {
+    callSettings.video = {sendVideo, receiveVideo};
     callSettings.H264first = H264first;
-  }
-  if (sendVideo) {
-    callSettings.video = { sendVideo, receiveVideo };
   }
 
   if (document.getElementById('conf-call-btn').checked) {
