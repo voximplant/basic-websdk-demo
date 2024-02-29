@@ -1,6 +1,6 @@
 {
   "name": "basic-websdk-demo",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "scripts": {
     "commitlint": "commitlint",
     "lint": "standardx --fix",
@@ -9,7 +9,7 @@
   "author": "Zingaya Inc. <info@voximplant.com> (https://voximplant.com)",
   "repository": {
     "type": "git",
-    "url": "git@git.zingaya.com:voximplant-core/websdk.git"
+    "url": "git@github.com:voximplant/basic-websdk-demo.git"
   },
   "tags": [
     "demo",
