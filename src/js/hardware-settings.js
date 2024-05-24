@@ -39,24 +39,6 @@ const setHardwareSettings = async () => {
     addToDropdown(speaker, selectElementSpeaker, selectedSpeaker, speakerItems);
   });
 
-  document.onclick = (e) => {
-    const allOptionItems = document.getElementsByClassName('select-items');
-    for (const optionItems of allOptionItems) {
-      if (
-        !optionItems.classList.contains('hidden') &&
-        optionItems.previousElementSibling !== e.target
-      ) {
-        optionItems.classList.add('hidden');
-      }
-    }
-    const allSelected = document.getElementsByClassName('select-selected');
-    for (const selected of allSelected) {
-      if (selected.classList.contains('opened') && selected !== e.target) {
-        selected.classList.remove('opened');
-      }
-    }
-  };
-
   // add event listeners to select elements
   document.getElementById('change-microphone').onclick = (e) => {
     if (e.target.value === 'default') return;

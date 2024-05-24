@@ -47,3 +47,22 @@ const enableDropdownSelect = () => {
     element.addEventListener('click', toggleDropdown);
   }
 };
+
+const closeDropdown = (event) => {
+  const allOptionItems = document.getElementsByClassName('select-items');
+  for (const optionItems of allOptionItems) {
+    if (
+      !optionItems.classList.contains('hidden') &&
+      optionItems.previousElementSibling !== event.target
+    ) {
+      optionItems.classList.add('hidden');
+    }
+  }
+  const allSelected = document.getElementsByClassName('select-selected');
+
+  for (const selected of allSelected) {
+    if (selected.classList.contains('opened') && selected !== event.target) {
+      selected.classList.remove('opened');
+    }
+  }
+}

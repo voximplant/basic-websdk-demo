@@ -14,7 +14,6 @@ const muteSwitchGroup = document.getElementById('switch-mute');
 const callOrConferenceRadioSelectors = document.querySelectorAll('.radio-container');
 const sendVideoCheck = document.getElementById('input-send_video_call');
 const H264Check = document.getElementById('input-h264_call');
-const receiveVideoCheck = document.getElementById('input-receive_video_call');
 const simulcastCheck = document.getElementById('input-simulcast');
 const callButtonsGroup = document.getElementById('call-btn-group');
 const declineButtonGroup = document.getElementById('decline-btn-group');
@@ -59,7 +58,6 @@ const disableConnectingSettings = () => {
   inputNumber.disabled = true;
   sendVideoCheck.disabled = true;
   H264Check.disabled = true;
-  receiveVideoCheck.disabled = true;
   oneToOneCallSelect.disabled = true;
   simulcastCheck.disabled = true;
   conferenceCallSelect.disabled = true;
@@ -87,16 +85,6 @@ const manageConnectingView = () => {
     if (oneToOneCallSelect.checked) {
       joinAsViewerButton.classList.add('hidden');
       simulcastContainer.classList.add('hidden');
-    }
-  };
-
-  // check receiveVideo if sendVideo checked, because video calls stable work without parameter receiveVideo is not guaranteed
-  sendVideoCheck.onchange = () => {
-    if (sendVideoCheck.checked) {
-      receiveVideoCheck.checked = true;
-      receiveVideoCheck.disabled = true;
-    } else {
-      receiveVideoCheck.disabled = false;
     }
   };
 
@@ -202,7 +190,6 @@ const callStateDisconnected = () => {
   joinAsViewerButton.classList.add('hidden');
   transferButton.classList.add('hidden');
   sendVideoCheck.disabled = false;
-  receiveVideoCheck.disabled = false;
   H264Check.disabled = false;
   simulcastCheck.disabled = false;
   callOrConferenceRadioSelectors.forEach((radio) => radio.classList.remove('disabled'));

@@ -16,3 +16,9 @@ document.getElementById('login-btn').onclick = async () => {
 sdk.on(VoxImplant.Events.IncomingCall, (e) => {
   handleIncomingCall(e);
 });
+
+enableDropdownSelect();
+
+document.addEventListener('click', (event) => {
+  closeDropdown(event);
+})
