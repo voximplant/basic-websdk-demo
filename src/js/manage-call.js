@@ -1,28 +1,40 @@
+const incomingCall = document.getElementById('incoming-call');
+
 // handle an incoming call
-const handleIncomingCall = ({ call }) => {
+const handleIncomingCall = ({call}) => {
   currentCall = call;
   cleanData();
-  setUpCall({ currentCall, isIncoming: true, number: call.number() });
-  document.getElementById('incoming-call').classList.remove('hidden');
+  currentCall.addEventListener(VoxImplant.CallEvents.EndpointAdded, onEndpointAdded);
+  incomingCall.classList.remove('hidden');
   document.getElementById('caller-number').innerText = call.number();
+
   document.querySelector('.close-incoming-window').onclick = () => {
-    document.getElementById('incoming-call').classList.add('hidden');
+    incomingCall.classList.add('hidden');
   };
-  document.getElementById('incoming-call-answer').onclick = () => {
-    call &&
-      call.answer(
-        '',
-        {},
-        {
-          sendVideo: document.getElementById('input-send_video_incoming_call').checked,
-          receiveVideo: true,
-        }
-      );
-    document.getElementById('incoming-call').classList.add('hidden');
-  };
+
   document.getElementById('incoming-call-decline').onclick = () => {
     document.querySelector('.incoming-call').classList.add('hidden');
     call && call.decline();
+  };
+
+  document.getElementById('incoming-call-answer').onclick = () => {
+    const sendVideo = document.getElementById('input-send_video_incoming_call').checked;
+
+    setUpCall({
+      currentCall,
+      isIncoming: true,
+      number: call.number(),
+      video: sendVideo,
+    });
+    incomingCall.classList.add('hidden');
+    call &&
+    call.answer(
+      '',
+      {},
+      {
+        sendVideo,
+      }
+    );
   };
 };
 
@@ -38,13 +50,12 @@ const createCall = () => {
   }
 
   const sendVideo = document.getElementById('input-send_video_call').checked || false;
-  const receiveVideo = document.getElementById('input-receive_video_call').checked || false;
   const H264first = document.getElementById('input-h264_call').checked || false;
   const simulcast = document.getElementById('input-simulcast').checked || false;
 
-  const callSettings = { number };
-  if (receiveVideo || sendVideo) {
-    callSettings.video = {sendVideo, receiveVideo};
+  const callSettings = {number};
+  if (sendVideo) {
+    callSettings.video = {sendVideo};
     callSettings.H264first = H264first;
   }
 
@@ -55,7 +66,7 @@ const createCall = () => {
     currentCall = sdk.call(callSettings);
   }
   disableConnectingSettings();
-  setUpCall({ currentCall, number, video: sendVideo || receiveVideo });
+  setUpCall({currentCall, number, video: sendVideo});
 };
 
 const createTransferCall = () => {
@@ -98,30 +109,29 @@ const createTransferCall = () => {
   });
 };
 
-const setUpCall = ({ currentCall, isIncoming, number, viewer, video }) => {
+const setUpCall = ({currentCall, isIncoming, number, viewer, video}) => {
   let prefix = currentCall.settings.isConference ? 'Call conference to' : 'Call to';
   if (isIncoming) prefix = 'Incoming call from';
   logger.write(`${prefix} ${number}...`);
   document.getElementById('end-call').onclick = () => {
     currentCall.hangup();
   };
-  currentCall.addEventListener(VoxImplant.CallEvents.EndpointAdded, onEndpointAdded);
-
+  if (!isIncoming) {
+    currentCall.addEventListener(VoxImplant.CallEvents.EndpointAdded, onEndpointAdded);
+  }
   currentCall.addEventListener(VoxImplant.CallEvents.Updated, (e) => {
     logger.write(`CALL UPDATED: ${simpleStringify(e)}`);
   });
-
-  currentCall.addEventListener(VoxImplant.CallEvents.Connected, () => {
+  currentCall.addEventListener(VoxImplant.CallEvents.Connected, (e) => {
+    logger.write(`${prefix} ${number} was connected`);
     startTimer();
     if (isIncoming || viewer) {
       disableConnectingSettings();
     }
-    if (viewer || (!video && !isIncoming)) {
+    if (viewer || !video) {
       disableDropdownSelect(viewer);
     }
-    if (isIncoming) {
-      callStateConnected(true);
-    } else if (!viewer) {
+    if (!viewer) {
       callStateConnected(video);
     }
   });
@@ -163,8 +173,8 @@ const joinAsViewer = () => {
   cleanData();
   if (sdk.joinAsViewer) {
     currentCall = sdk.joinAsViewer(number);
-    setUpCall({ currentCall, number, viewer: true });
+    setUpCall({currentCall, number, viewer: true});
   } else {
-    logger.write("This SDK version doesn't allow to call as viewer");
+    logger.write('This SDK version doesn\'t allow to call as viewer');
   }
 };

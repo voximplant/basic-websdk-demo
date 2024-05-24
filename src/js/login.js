@@ -7,6 +7,10 @@ const userNameInput = document.getElementById('input-username');
 const passwordInput = document.getElementById('input-password');
 const loginButton = document.getElementById('login-btn');
 
+const nodeSelect = document.getElementById('select-node');
+const selectedNode = document.querySelector('.selected-node');
+const nodeItems = document.querySelector('.node-items');
+
 document.addEventListener('DOMContentLoaded', () => {
   // get authorisation parameters from url to login in sdk skipping form filling
   // получаем параметры авторизации из url чтобы не заполнять форму вручную
@@ -40,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const authDataFill = ({
+  node,
   username,
   password,
   serverIp,
@@ -47,6 +52,9 @@ const authDataFill = ({
   isDebugInfo,
   connectivityCheck,
 }) => {
+  selectedNode.textContent = node || '';
+  selectedNode.id = node || '';
+
   userNameInput.value = username || '';
   passwordInput.value = password || '';
   serverIpInput.value = serverIp || '';
@@ -73,6 +81,8 @@ const login = async () => {
       : [];
   const username = userNameInput.value;
   const password = passwordInput.value;
+  const node = selectedNode.id;
+  lastData.node = node;
   lastData.username = username;
   lastData.password = password;
   lastData.serverIp = serverIpInput.value;
@@ -86,7 +96,7 @@ const login = async () => {
   if (sdk.alreadyInitialized) {
     await signIn(username, password);
   } else {
-    await init(username, password);
+    await init(username, password, node);
   }
 
   if (sdk.getClientState() === VoxImplant.ClientState.LOGGED_IN) {
@@ -97,9 +107,10 @@ const login = async () => {
   localStorage.setItem('lastData', JSON.stringify(lastData));
 };
 
-const init = async (username, password) => {
+const init = async (username, password, node) => {
   try {
     await sdk.init({
+      node, // the Voximplant account node.
       localVideoContainerId: 'local_video_holder', // Id of HTMLElement that is used as a default container for local video elements
       serverIp: serverIpInput.value, // IP address of a particular media gateway for connection. If it's not specified, IP address will be chosen automatically
       showDebugInfo: debugInfoInput.checked, // Show debug info in the console
@@ -182,3 +193,15 @@ const inputAuthDataProcessing = () => {
     });
   });
 };
+
+
+
+
+const nodes = Object.entries(VoxImplant.ConnectionNode)
+  ?.map(([name, node]) => ({
+  id: node,
+  name: name,
+})) ?? [];
+nodes.forEach((node) => {
+  addToDropdown(node, nodeSelect, selectedNode, nodeItems);
+});

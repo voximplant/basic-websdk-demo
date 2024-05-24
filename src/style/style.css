@@ -649,6 +649,7 @@ video {
 /* Dropdown */
 select {
   opacity: 0;
+  position: absolute;
 }
 
 .select-selected {
@@ -661,7 +662,7 @@ select {
   box-sizing: border-box;
   background-image: url('../assets/down.svg');
   background-repeat: no-repeat;
-  background-position: 370px;
+  background-position: center right 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -670,14 +671,14 @@ select {
 .select-selected.opened {
   background-image: url('../assets/up.svg');
   background-repeat: no-repeat;
-  background-position: 370px;
+  background-position: center right 15px;;
 }
 
 .select-selected.disabled {
   cursor: default;
   background-image: url('../assets/disabled-down.svg');
   background-repeat: no-repeat;
-  background-position: 370px;
+  background-position: center right 15px;
   border: 1px solid #c7c8d9;
 }
 
@@ -883,4 +884,14 @@ th {
 
 .checkbox_group {
   margin-top: 12px;
+}
+
+.login .select-selected {
+  margin-top: 4px;
+  border: 1px solid #e3e4eb;
+}
+
+.login .select-selected,.select-items,.select-items div {
+  width: initial;
+  z-index: 1;
 }

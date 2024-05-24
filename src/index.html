@@ -43,6 +43,14 @@
             <input type="password" id="input-password" class="input" required pattern="\S+" />
           </div>
           <div class="form_group">
+            <label for="select-node" class="input_label">Account node</label>
+            <select name="select-node" id="select-node"></select>
+            <div class="custom-select camera">
+              <div class="select-selected selected-node opened"></div>
+              <div class="node-items select-items hidden"></div>
+            </div>
+          </div>
+          <div class="form_group">
             <div class="checkbox checkbox__large">
               <input tabindex="0" type="checkbox" id="input-debug" />
               <label for="input-debug">Show full debug info</label>
@@ -183,10 +191,6 @@
             <div class="checkbox">
               <input type="checkbox" id="input-h264_call" />
               <label for="input-h264_call">H264</label>
-            </div>
-            <div class="checkbox">
-              <input type="checkbox" id="input-receive_video_call" />
-              <label for="input-receive_video_call">ReceiveVideo</label>
             </div>
             <div class="checkbox hidden" id="input-simulcast-container">
               <input type="checkbox" id="input-simulcast" />
