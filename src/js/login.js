@@ -7,13 +7,14 @@ const userNameInput = document.getElementById('input-username');
 const passwordInput = document.getElementById('input-password');
 const loginButton = document.getElementById('login-btn');
 
+const errorMessageOutput = document.querySelector('.error-message');
+
 const nodeSelect = document.getElementById('select-node');
 const selectedNode = document.querySelector('.selected-node');
 const nodeItems = document.querySelector('.node-items');
 
 document.addEventListener('DOMContentLoaded', () => {
   // get authorisation parameters from url to login in sdk skipping form filling
-  // получаем параметры авторизации из url чтобы не заполнять форму вручную
   const urlHashParams = location.hash;
   const parsedParams = urlHashParams
     .substr(1)
@@ -29,14 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loginButton.click();
   } else {
     // get authorisation parameters storing in localStorage from last login to fill form automatically
-    // получаем авторизационные параметры из localStorage от последнего входа чтобы не заполнять форму вручную
     const lastDataRaw = localStorage.getItem('lastData');
     if (lastDataRaw) {
       loginButton.disabled = false;
       try {
         lastDataFromLocalStorage = JSON.parse(lastDataRaw);
         authDataFill(lastDataFromLocalStorage);
-      } catch (e) {}
+      } catch (e) {
+      }
     }
   }
   document.querySelector('.page_login').classList.remove('hidden');
@@ -44,14 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const authDataFill = ({
-  node,
-  username,
-  password,
-  serverIp,
-  serverIps,
-  isDebugInfo,
-  connectivityCheck,
-}) => {
+                        node,
+                        username,
+                        password,
+                        serverIp,
+                        serverIps,
+                        isDebugInfo,
+                        connectivityCheck,
+                      }) => {
   selectedNode.textContent = node || '';
   selectedNode.id = node || '';
 
@@ -74,7 +75,18 @@ const authDataFill = ({
   }
 };
 
+const resetErrorState = () => {
+  errorMessageOutput.innerText = null;
+  nodeSelect.classList.remove('invalid');
+  serverIpInput.classList.remove('invalid');
+  connectivityCheckInput.classList.remove('invalid');
+  userNameInput.classList.remove('invalid');
+  passwordInput.classList.remove('invalid');
+}
+
 const login = async () => {
+  resetErrorState();
+
   const serverIps =
     lastDataFromLocalStorage && lastDataFromLocalStorage.serverIps.length
       ? lastDataFromLocalStorage.serverIps
@@ -115,34 +127,52 @@ const init = async (username, password, node) => {
       serverIp: serverIpInput.value, // IP address of a particular media gateway for connection. If it's not specified, IP address will be chosen automatically
       showDebugInfo: debugInfoInput.checked, // Show debug info in the console
     });
-  } catch (e) {}
-  await connectToVoxCloud(username, password, connectivityCheckInput.checked);
+    await connectToVoxCloud(username, password, connectivityCheckInput.checked);
+
+    // Cant change initialize config after sdk already initialized. Disable config fields.
+    debugInfoInput.disabled = true;
+    connectivityCheckInput.disabled = true;
+    serverIpInput.disabled = true;
+    nodeSelect.disabled = true;
+  } catch (e) {
+    if (e.message.includes('"node"')) {
+      nodeSelect.classList.add('invalid');
+    }
+    errorMessageOutput.innerText = e.message;
+    console.error(e);
+  }
 };
 
 const connectToVoxCloud = async (username, password, connectivityCheck = false) => {
   try {
-    await sdk.connect(connectivityCheck);
-    localStorage.setItem('lastConnection', JSON.stringify({ connected: true }));
+    const connectionResult = await sdk.connect(connectivityCheck);
+    if (!connectionResult) {
+      // disable inputs if the server IP is incorrect or if it's impossible to connect to the server with connectivity check on
+      serverIpInput.classList.add('invalid');
+      connectivityCheckInput.checked && connectivityCheckInput.classList.add('invalid');
+      serverIpInput.disabled = true;
+      userNameInput.disabled = true;
+      passwordInput.disabled = true;
+      debugInfoInput.disabled = true;
+      connectivityCheckInput.disabled = true;
+      loginButton.disabled = true;
+      document.querySelectorAll('.form_group').forEach((input) => input.classList.add('disabled'));
+
+      const errorMessage = connectivityCheckInput.checked
+        ? 'Cannot connect to the server with the chosen parameters. Please reload the page and try again.'
+        : 'Cannot connect to the server. Please reload the page and try again.';
+      errorMessageOutput.innerText = errorMessage;
+      return
+    }
+    localStorage.setItem('lastConnection', JSON.stringify({connected: connectionResult}));
+
+    if (!username) username = userNameInput.value;
+    if (!password) password = passwordInput.value;
+    await signIn(username, password);
   } catch (e) {
-    // disable inputs if the server IP is incorrect or if it's impossible to connect to the server with connectivity check on
-    serverIpInput.classList.add('invalid');
-    connectivityCheckInput.checked && connectivityCheckInput.classList.add('invalid');
-    serverIpInput.disabled = true;
-    userNameInput.disabled = true;
-    passwordInput.disabled = true;
-    debugInfoInput.disabled = true;
-    connectivityCheckInput.disabled = true;
-    loginButton.disabled = true;
-    document.querySelectorAll('.form_group').forEach((input) => input.classList.add('disabled'));
-    const errorMessage = connectivityCheckInput.checked
-      ? 'Cannot connect to the server with the chosen parameters. Please reload the page and try again.'
-      : 'Cannot connect to the server. Please reload the page and try again.';
-    document.querySelector('.auth-error').innerText = errorMessage;
-    return;
+    errorMessageOutput.innerText = e.message;
+    console.error(e)
   }
-  if (!username) username = userNameInput.value;
-  if (!password) password = passwordInput.value;
-  await signIn(username, password);
 };
 
 const signIn = async (username, password) => {
@@ -163,8 +193,21 @@ const signIn = async (username, password) => {
       authData.querySelector('h2').innerText = `Logged in as ${username} at ${serverIpInput.value}`;
     }
   } catch (e) {
-    userNameInput.classList.add('invalid');
-    passwordInput.classList.add('invalid');
+    const { code } = e;
+    switch (code) {
+      case 401:
+        errorMessageOutput.innerText = 'Password invalid';
+        passwordInput.classList.add('invalid');
+        break;
+      case 404:
+        errorMessageOutput.innerText = 'User not Found';
+        userNameInput.classList.add('invalid');
+        break;
+      default:
+        return `Authentication failed with code ${code}`;
+    }
+
+    console.error(e)
   }
 };
 
@@ -195,13 +238,11 @@ const inputAuthDataProcessing = () => {
 };
 
 
-
-
 const nodes = Object.entries(VoxImplant.ConnectionNode)
   ?.map(([name, node]) => ({
-  id: node,
-  name: name,
-})) ?? [];
+    id: node,
+    name: name,
+  })) ?? [];
 nodes.forEach((node) => {
   addToDropdown(node, nodeSelect, selectedNode, nodeItems);
 });
