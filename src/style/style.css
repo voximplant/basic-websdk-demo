@@ -376,8 +376,8 @@ input:disabled {
   cursor: default;
   color: #e5e5e5;
 }
-.auth-error {
-  height: 32px;
+.error-message {
+  min-height: 32px;
   font-size: 12px;
   line-height: 16px;
   color: red;
@@ -652,6 +652,10 @@ select {
   position: absolute;
 }
 
+select.invalid + .custom-select > .select-selected {
+  border: 1px solid red;
+}
+
 .select-selected {
   cursor: pointer;
   border: 1px solid #662eff;
@@ -674,6 +678,11 @@ select {
   background-position: center right 15px;;
 }
 
+select[disabled] + .custom-select {
+  pointer-events: none;
+}
+
+select[disabled] + .custom-select > .select-selected,
 .select-selected.disabled {
   cursor: default;
   background-image: url('../assets/disabled-down.svg');
