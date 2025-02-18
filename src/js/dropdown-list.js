@@ -1,23 +1,24 @@
 // add an item to the available hardware devices dropdown list
-const addToDropdown = (device, selectElement, selected, items) => {
+const addToDropdown = ({ device, selected, selectElement, selectedElement, itemsElement }) => {
   const option = document.createElement('option');
   option.value = device.id;
   selectElement.appendChild(option);
   const divOption = document.createElement('div');
   divOption.innerText = device.name;
   divOption.id = device.id;
-  if (device.id === 'default') {
-    selected.textContent = device.name;
-    selected.id = device.id;
+
+  if (selected) {
+    selectedElement.textContent = device.name;
+    selectedElement.id = device.id;
   } else {
-    items.appendChild(divOption);
+    itemsElement.appendChild(divOption);
   }
   // place a device item into the selected field, close dropdown and trigger a native select element event to change hardware settings
   divOption.onclick = () => {
-    items.classList.add('hidden');
-    selected.classList.remove('opened');
-    selected.textContent = device.name;
-    selected.id = device.id;
+    itemsElement.classList.add('hidden');
+    selectedElement.classList.remove('opened');
+    selectedElement.textContent = device.name;
+    selectedElement.id = device.id;
     option.click();
   };
 };
@@ -65,4 +66,4 @@ const closeDropdown = (event) => {
       selected.classList.remove('opened');
     }
   }
-}
+};

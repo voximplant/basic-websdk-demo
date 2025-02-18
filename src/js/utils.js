@@ -33,3 +33,23 @@ const isIosSafari = () => {
   const webkit = !!ua.match(/WebKit/i);
   return iOS && webkit;
 };
+
+const isFirefox = () => {
+  return !!window.navigator.userAgent.match(/Firefox/i);
+};
+
+const isCameraMicrophone = (microphone, cameraList) => {
+  return microphone.group
+    ? Boolean(cameraList.find((cam) => cam.group === microphone.group))
+    : false;
+};
+
+/**
+ *
+ * @param {Element} element
+ */
+const removeChildren = (element) => {
+  [...element.children].forEach((child) => {
+    element.removeChild(child);
+  });
+};

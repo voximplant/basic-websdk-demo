@@ -36,8 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         lastDataFromLocalStorage = JSON.parse(lastDataRaw);
         authDataFill(lastDataFromLocalStorage);
-      } catch (e) {
-      }
+      } catch (e) {}
     }
   }
   document.querySelector('.page_login').classList.remove('hidden');
@@ -45,14 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const authDataFill = ({
-                        node,
-                        username,
-                        password,
-                        serverIp,
-                        serverIps,
-                        isDebugInfo,
-                        connectivityCheck,
-                      }) => {
+  node,
+  username,
+  password,
+  serverIp,
+  serverIps,
+  isDebugInfo,
+  connectivityCheck,
+}) => {
   selectedNode.textContent = node || '';
   selectedNode.id = node || '';
 
@@ -82,7 +81,7 @@ const resetErrorState = () => {
   connectivityCheckInput.classList.remove('invalid');
   userNameInput.classList.remove('invalid');
   passwordInput.classList.remove('invalid');
-}
+};
 
 const login = async () => {
   resetErrorState();
@@ -139,7 +138,6 @@ const init = async (username, password, node) => {
       nodeSelect.classList.add('invalid');
     }
     errorMessageOutput.innerText = e.message;
-    console.error(e);
   }
 };
 
@@ -162,16 +160,15 @@ const connectToVoxCloud = async (username, password, connectivityCheck = false) 
         ? 'Cannot connect to the server with the chosen parameters. Please reload the page and try again.'
         : 'Cannot connect to the server. Please reload the page and try again.';
       errorMessageOutput.innerText = errorMessage;
-      return
+      return;
     }
-    localStorage.setItem('lastConnection', JSON.stringify({connected: connectionResult}));
+    localStorage.setItem('lastConnection', JSON.stringify({ connected: connectionResult }));
 
     if (!username) username = userNameInput.value;
     if (!password) password = passwordInput.value;
     await signIn(username, password);
   } catch (e) {
     errorMessageOutput.innerText = e.message;
-    console.error(e)
   }
 };
 
@@ -206,8 +203,6 @@ const signIn = async (username, password) => {
       default:
         return `Authentication failed with code ${code}`;
     }
-
-    console.error(e)
   }
 };
 
@@ -237,12 +232,16 @@ const inputAuthDataProcessing = () => {
   });
 };
 
-
-const nodes = Object.entries(VoxImplant.ConnectionNode)
-  ?.map(([name, node]) => ({
+const nodes =
+  Object.entries(VoxImplant.ConnectionNode)?.map(([name, node]) => ({
     id: node,
     name: name,
   })) ?? [];
 nodes.forEach((node) => {
-  addToDropdown(node, nodeSelect, selectedNode, nodeItems);
+  addToDropdown({
+    device: node,
+    selectElement: nodeSelect,
+    selectedElement: selectedNode,
+    itemsElement: nodeItems,
+  });
 });

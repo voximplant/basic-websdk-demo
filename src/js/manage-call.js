@@ -1,7 +1,7 @@
 const incomingCall = document.getElementById('incoming-call');
 
 // handle an incoming call
-const handleIncomingCall = ({call}) => {
+const handleIncomingCall = ({ call }) => {
   currentCall = call;
   cleanData();
   currentCall.addEventListener(VoxImplant.CallEvents.EndpointAdded, onEndpointAdded);
@@ -28,13 +28,13 @@ const handleIncomingCall = ({call}) => {
     });
     incomingCall.classList.add('hidden');
     call &&
-    call.answer(
-      '',
-      {},
-      {
-        sendVideo,
-      }
-    );
+      call.answer(
+        '',
+        {},
+        {
+          sendVideo,
+        }
+      );
   };
 };
 
@@ -53,9 +53,9 @@ const createCall = () => {
   const H264first = document.getElementById('input-h264_call').checked || false;
   const simulcast = document.getElementById('input-simulcast').checked || false;
 
-  const callSettings = {number};
+  const callSettings = { number };
   if (sendVideo) {
-    callSettings.video = {sendVideo};
+    callSettings.video = { sendVideo };
     callSettings.H264first = H264first;
   }
 
@@ -66,7 +66,7 @@ const createCall = () => {
     currentCall = sdk.call(callSettings);
   }
   disableConnectingSettings();
-  setUpCall({currentCall, number, video: sendVideo});
+  setUpCall({ currentCall, number, video: sendVideo });
 };
 
 const createTransferCall = () => {
@@ -109,7 +109,7 @@ const createTransferCall = () => {
   });
 };
 
-const setUpCall = ({currentCall, isIncoming, number, viewer, video}) => {
+const setUpCall = ({ currentCall, isIncoming, number, viewer, video }) => {
   let prefix = currentCall.settings.isConference ? 'Call conference to' : 'Call to';
   if (isIncoming) prefix = 'Incoming call from';
   logger.write(`${prefix} ${number}...`);
@@ -173,8 +173,8 @@ const joinAsViewer = () => {
   cleanData();
   if (sdk.joinAsViewer) {
     currentCall = sdk.joinAsViewer(number);
-    setUpCall({currentCall, number, viewer: true});
+    setUpCall({ currentCall, number, viewer: true });
   } else {
-    logger.write('This SDK version doesn\'t allow to call as viewer');
+    logger.write("This SDK version doesn't allow to call as viewer");
   }
 };

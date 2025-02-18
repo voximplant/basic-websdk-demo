@@ -21,4 +21,4 @@ enableDropdownSelect();
 
 document.addEventListener('click', (event) => {
   closeDropdown(event);
-})
+});
