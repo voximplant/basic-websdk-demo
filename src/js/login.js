@@ -138,6 +138,8 @@ const init = async (username, password, node) => {
       nodeSelect.classList.add('invalid');
     }
     errorMessageOutput.innerText = e.message;
+    // eslint-disable-next-line no-console
+    console.error(e);
   }
 };
 
@@ -169,6 +171,8 @@ const connectToVoxCloud = async (username, password, connectivityCheck = false) 
     await signIn(username, password);
   } catch (e) {
     errorMessageOutput.innerText = e.message;
+    // eslint-disable-next-line no-console
+    console.error(e);
   }
 };
 
@@ -203,6 +207,8 @@ const signIn = async (username, password) => {
       default:
         return `Authentication failed with code ${code}`;
     }
+    // eslint-disable-next-line no-console
+    console.error(e);
   }
 };
 
