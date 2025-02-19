@@ -30,19 +30,22 @@ const setHardwareSettings = async () => {
   selectedSpeaker.addEventListener('click', toggleDropdown);
 
   // add event listeners to select elements
-  document.getElementById('change-microphone').onclick = (e) => {
+  selectElementMicrophone.onclick = async (e) => {
     currentMicrophone = currentMicrophones.find((m) => m.id === e.target.value);
-    changeMicrophone(e.target.value);
+    await changeMicrophone(e.target.value);
+    updateMicrophonesList();
   };
 
-  document.getElementById('change-camera').onclick = (e) => {
+  selectElementCamera.onclick = async (e) => {
     currentCamera = currentCameras.find((c) => c.id === e.target.value);
-    changeCamera(e.target.value);
+    await changeCamera(e.target.value);
+    updateCamerasList();
   };
 
-  document.getElementById('change-speaker').onclick = (e) => {
+  selectElementSpeaker.onclick = async (e) => {
     currentSpeaker = currentSpeakers.find((s) => s.id === e.target.value);
-    changeSpeaker(e.target.value);
+    await changeSpeaker(e.target.value);
+    updateSpeakersList();
   };
 };
 
