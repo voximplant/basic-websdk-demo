@@ -265,14 +265,14 @@ const setDeviceChangeLister = () => {
 
       const sdkMic = audioInputDevices.find((d) => d.id === audioSettings?.inputId);
       const micsDiff = getDevicesDiff(currentMicrophones, audioInputDevices);
-      const micsToUse = (micsDiff.added.length ? micsDiff.added : currentMicrophones).filter(
+      const micsToUse = (micsDiff.added.length ? micsDiff.added : audioInputDevices).filter(
         (mic) => !isCameraMicrophone(mic, videoInputDevices)
       );
       const mic = autoSelectDevice(micsToUse);
 
       const sdkSpeaker = audioOutputDevices.find((d) => d.id === audioSettings?.outputId);
       const speakersDiff = getDevicesDiff(currentSpeakers, audioOutputDevices);
-      const speakersToUse = speakersDiff.added.length ? speakersDiff.added : currentSpeakers;
+      const speakersToUse = speakersDiff.added.length ? speakersDiff.added : audioOutputDevices;
       const speaker = autoSelectDevice(speakersToUse);
 
       const sdkCamera = videoInputDevices.find((d) => d.id === cameraSettings?.cameraId);
