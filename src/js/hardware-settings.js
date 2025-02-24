@@ -275,22 +275,18 @@ const setDeviceChangeLister = () => {
       const speakersToUse = speakersDiff.added.length ? speakersDiff.added : audioOutputDevices;
       const speaker = autoSelectDevice(speakersToUse);
 
-      const sdkCamera = videoInputDevices.find((d) => d.id === cameraSettings?.cameraId);
-
       currentCameras = videoInputDevices;
       currentMicrophones = audioInputDevices;
       currentSpeakers = audioOutputDevices;
 
-      if (sdkCamera && !isSameDevice(sdkCamera, currentCamera)) {
-        currentCamera = sdkCamera;
-      }
+      currentCamera = videoInputDevices.find((d) => d.id === cameraSettings?.cameraId);
+      currentMicrophone = mic;
+      currentSpeaker = speaker;
 
       await changeAudioSettings({
-        inputId: mic && !isSameDevice(mic, sdkMic) ? mic.id : null,
-        outputId: speaker && !isSameDevice(speaker, sdkSpeaker) ? speaker.id : null,
+        inputId: !isSameDevice(mic, sdkMic) ? mic.id : null,
+        outputId: !isSameDevice(speaker, sdkSpeaker) ? speaker.id : null,
       });
-      if (mic) currentMicrophone = mic;
-      if (speaker) currentSpeaker = speaker;
 
       updateDeviceLists();
     }
