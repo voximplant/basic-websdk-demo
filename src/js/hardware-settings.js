@@ -284,8 +284,8 @@ const setDeviceChangeLister = () => {
       currentSpeaker = speaker;
 
       await changeAudioSettings({
-        inputId: !isSameDevice(mic, sdkMic) ? mic.id : null,
-        outputId: !isSameDevice(speaker, sdkSpeaker) ? speaker.id : null,
+        inputId: mic && !isSameDevice(mic, sdkMic) ? mic.id : null,
+        outputId: speaker && !isSameDevice(speaker, sdkSpeaker) ? speaker.id : null,
       });
 
       updateDeviceLists();
