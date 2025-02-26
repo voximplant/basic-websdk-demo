@@ -280,8 +280,8 @@ const setDeviceChangeLister = () => {
       currentSpeakers = audioOutputDevices;
 
       currentCamera = videoInputDevices.find((d) => d.id === cameraSettings?.cameraId);
-      currentMicrophone = mic;
-      currentSpeaker = speaker;
+      currentMicrophone = mic || sdkMic;
+      currentSpeaker = speaker || sdkMic;
 
       await changeAudioSettings({
         inputId: mic && !isSameDevice(mic, sdkMic) ? mic.id : null,
