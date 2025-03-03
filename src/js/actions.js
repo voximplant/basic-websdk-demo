@@ -198,6 +198,7 @@ const callStateDisconnected = () => {
   checkboxGroups.forEach((group) => {
     group.querySelectorAll('input').forEach((input) => (input.checked = false));
   });
+  currentCall = null;
 };
 
 // return UI elements to the initial state before call

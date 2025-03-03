@@ -24,7 +24,8 @@
   },
   "lint-staged": {
     "src/**/*.js": [
-      "yarn lint", "prettier --write --ignore-unknown"
+      "yarn lint",
+      "prettier --write --ignore-unknown"
     ]
   },
   "devDependencies": {

@@ -533,18 +533,18 @@ input:disabled {
 }
 
 .full_screen_icon {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    right: 10px;
-    top: 10px;
-    background-image: url("../assets/full_screen.svg");
-    z-index: 1;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  right: 10px;
+  top: 10px;
+  background-image: url('../assets/full_screen.svg');
+  z-index: 1;
 }
 
 video.full_screen {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 .remote-video-holder {
   display: grid;
@@ -568,7 +568,8 @@ video.full_screen {
 
 .local-video-holder,
 .participant-container {
-  position: relative;display: flex;
+  position: relative;
+  display: flex;
   height: 225px;
   width: 400px;
   background-color: black;
@@ -588,14 +589,14 @@ video.full_screen {
 }
 video {
   height: 225px;
-
 }
 .video_container {
-    position: relative;display: inline-block;
+  position: relative;
+  display: inline-block;
   background-color: black;
-    height: 225px;
-    display: flex;
-    justify-content: center;
+  height: 225px;
+  display: flex;
+  justify-content: center;
 }
 @media (min-width: 700px) {
   .remote-video-holder {
@@ -675,7 +676,7 @@ select.invalid + .custom-select > .select-selected {
 .select-selected.opened {
   background-image: url('../assets/up.svg');
   background-repeat: no-repeat;
-  background-position: center right 15px;;
+  background-position: center right 15px;
 }
 
 select[disabled] + .custom-select {
@@ -900,7 +901,9 @@ th {
   border: 1px solid #e3e4eb;
 }
 
-.login .select-selected,.select-items,.select-items div {
+.login .select-selected,
+.select-items,
+.select-items div {
   width: initial;
   z-index: 1;
 }
