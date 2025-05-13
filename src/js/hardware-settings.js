@@ -83,8 +83,10 @@ const updateCamerasList = () => {
   removeChildren(selectElementCamera);
   removeChildren(camItems);
 
-  if (!currentCameras.length) {
+  if (!currentCameras?.length) {
     selectElementCamera.disabled = true;
+    selectedCamera.textContent = '';
+    selectedCamera.id = '';
     return;
   }
   selectElementCamera.disabled = false;
@@ -104,17 +106,15 @@ const updateMicrophonesList = () => {
   removeChildren(selectElementMicrophone);
   removeChildren(micItems);
 
-  const microphonesToUse = currentMicrophones.filter(
-    (mic) => !isCameraMicrophone(mic, currentCameras)
-  );
-
-  if (!microphonesToUse.length) {
+  if (!currentMicrophones?.length) {
     selectElementMicrophone.disabled = true;
+    selectedMic.textContent = '';
+    selectedMic.id = '';
     return;
   }
   selectElementMicrophone.disabled = false;
 
-  microphonesToUse.forEach((mic) => {
+  currentMicrophones.forEach((mic) => {
     addToDropdown({
       device: mic,
       selected: mic.id === currentMicrophone?.id,
@@ -131,6 +131,8 @@ const updateSpeakersList = () => {
 
   if (!currentSpeakers?.length) {
     selectElementSpeaker.disabled = true;
+    selectedSpeaker.textContent = '';
+    selectedSpeaker.id = '';
     return;
   }
   selectElementSpeaker.disabled = false;
@@ -265,9 +267,7 @@ const setDeviceChangeLister = () => {
 
       const sdkMic = audioInputDevices.find((d) => d.id === audioSettings?.inputId);
       const micsDiff = getDevicesDiff(currentMicrophones, audioInputDevices);
-      const micsToUse = (micsDiff.added.length ? micsDiff.added : audioInputDevices).filter(
-        (mic) => !isCameraMicrophone(mic, videoInputDevices)
-      );
+      const micsToUse = micsDiff.added.length ? micsDiff.added : audioInputDevices;
       const mic = autoSelectDevice(micsToUse);
 
       const sdkSpeaker = audioOutputDevices.find((d) => d.id === audioSettings?.outputId);
