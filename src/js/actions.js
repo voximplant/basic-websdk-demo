@@ -5,6 +5,7 @@ const oneToOneCallSelect = document.getElementById('one-to-one-call-btn');
 const conferenceCallSelect = document.getElementById('conf-call-btn');
 const joinAsViewerButton = document.getElementById('viewer-button');
 const showLocalVideoInput = document.getElementById('show-local-video-switch');
+const replaceBackgroundInput = document.getElementById('replace-background-switch');
 const startSendingVideoInput = document.getElementById('start-sending-video');
 const startSendingVideoSwitchGroup = document.getElementById('switch-start-video');
 const shareButton = document.getElementById('start-sharing');
@@ -50,6 +51,8 @@ const accessFunctionality = () => {
   shareButton.onclick = startShare;
   holdButton.onclick = holdCall;
   muteInput.onchange = muteAudio;
+
+  replaceBackgroundInput.onchange = replaceBackground;
 };
 
 // disable the caller's connection settings after the call started

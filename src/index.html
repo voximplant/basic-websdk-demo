@@ -272,6 +272,13 @@
                 <span class="slider"></span>
               </label>
             </div>
+            <div class="switch-block">
+              Replace background
+              <label class="switch">
+                <input type="checkbox" id="replace-background-switch" />
+                <span class="slider"></span>
+              </label>
+            </div>
             <div class="switch-block disabled" id="switch-mute">
               Mute
               <label class="switch">
@@ -322,6 +329,16 @@
     <script src="js/login.js"></script>
     <script src="js/manage-call.js"></script>
     <script src="js/hardware-settings.js"></script>
+    <script src="js/videoProcessor.js"></script>
     <script src="index.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-segmentation"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675465747/selfie_segmentation.js"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
