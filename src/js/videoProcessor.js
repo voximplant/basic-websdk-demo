@@ -106,7 +106,12 @@ const addVideoProcessor = async (websdkClient) => {
   const backgroundImage = await loadBackgroundImage('assets/voximplant-background.jpg');
   const segmenter = await loadSegmentationModel();
 
+  let isProcessing = false;
+  let intervalId = null;
+
   websdkClient.videoMediaTrackTransform = (originalTrack) => {
+    if (intervalId) clearInterval(intervalId);
+
     const compositor = new WebGl();
     compositor.init();
 
@@ -127,8 +132,7 @@ const addVideoProcessor = async (websdkClient) => {
     const downscaleCanvas = document.createElement('canvas');
     const downscaleCtx = downscaleCanvas.getContext('2d');
 
-    let isProcessing = false;
-    let intervalId = null;
+
 
     // Process frames continuously
     const processFrame = async () => {
