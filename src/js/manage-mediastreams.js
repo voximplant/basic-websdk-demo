@@ -89,6 +89,16 @@ const showLocalVideo = () => {
   }
 };
 
+// replace background
+const replaceBackground = () => {
+  const isReplace = document.getElementById('replace-background-switch').checked;
+  if (isReplace) {
+    addVideoProcessor(sdk);
+  } else {
+    removeVideoProcessor(sdk);
+  }
+};
+
 // Start/stop sending video to a call. In case of a remote participant uses a Web SDK client,
 // he/she will receive either the EndpointEvents.RemoteMediaAdded or EndpointEvents.RemoteMediaRemoved event accordingly.
 const sendingVideo = () => {
