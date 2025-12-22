@@ -119,14 +119,15 @@ const callStateConnected = (video) => {
   if (sendVideoCheck.checked || sendVideoIncomingCall.checked) {
     startSendingVideoInput.checked = true;
   }
-  if (video) {
-    showLocalVideoCheck.disabled = false;
-    replaceVideoCheck.disabled = false;
-    shareButton.disabled = false;
-    stopSharingButton.disabled = false;
-    startSendingVideoSwitchGroup.classList.remove('disabled');
-    startSendingVideoInput.disabled = false;
-  }
+
+  showLocalVideoCheck.disabled = false;
+  replaceVideoCheck.disabled = false;
+  shareButton.disabled = false;
+  stopSharingButton.disabled = false;
+  startSendingVideoSwitchGroup.classList.remove('disabled');
+  startSendingVideoInput.disabled = false;
+
+
   muteInput.disabled = false;
   muteSwitchGroup.classList.remove('disabled');
   callTransferButton.onclick = createTransferCall;

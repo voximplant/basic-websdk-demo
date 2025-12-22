@@ -128,7 +128,7 @@ const setUpCall = ({ currentCall, isIncoming, number, viewer, video }) => {
     if (isIncoming || viewer) {
       disableConnectingSettings();
     }
-    if (viewer || !video) {
+    if (viewer) {
       disableDropdownSelect(viewer);
     }
     if (!viewer) {
